@@ -23,7 +23,9 @@ polynomial(
   pointsize = 4.5,
   linesize = 0.8,
   width.bar = NA,
-  n = NA
+  n = NA,
+  SSq = NA,
+  DFres = NA
 )
 }
 \arguments{
@@ -64,6 +66,10 @@ polynomial(
 \item{width.bar}{width of the error bars of a regression graph.}
 
 \item{n}{Number of decimal places for regression equations}
+
+\item{SSq}{Sum of squares of the residue}
+
+\item{DFres}{Residue freedom degrees}
 }
 \value{
 Returns linear, quadratic or cubic regression analysis.

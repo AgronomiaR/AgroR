@@ -331,9 +331,9 @@ DBC=function(trat,
   }
   if(quali==FALSE){
     trat=trat1
-    if(grau==1){graph=polynomial(trat,response, grau = 1,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point)}
-    if(grau==2){graph=polynomial(trat,response, grau = 2,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point)}
-    if(grau==3){graph=polynomial(trat,response, grau = 3,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point)}
+    if(grau==1){graph=polynomial(trat,response, grau = 1,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point,SSq = a$`Sum Sq`[3],DFres = a$Df[3])}
+    if(grau==2){graph=polynomial(trat,response, grau = 2,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point,SSq = a$`Sum Sq`[3],DFres = a$Df[3])}
+    if(grau==3){graph=polynomial(trat,response, grau = 3,xlab=xlab,ylab=ylab,textsize=textsize, family=family,posi=posi,point=point,SSq = a$`Sum Sq`[3],DFres = a$Df[3])}
     grafico=graph[[1]]
   }}
   if(test=="noparametric"){

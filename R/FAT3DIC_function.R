@@ -205,7 +205,6 @@ FAT3DIC=function(f1,
           ad=data.frame(Fator1,Fator2,Fator3)
           letra=SK(anava,colnames(ad[i]))
           letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-          #letra1$resp=as.numeric(as.character(letra1$resp))
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           ad=data.frame(Fator1,Fator2,Fator3)
@@ -300,10 +299,9 @@ FAT3DIC=function(f1,
         print(mean.table)
         grafico=NA}
 
-      # Regressão
       if(quali[i]==FALSE && anavaF3[i,5]<=alpha.f){
         cat(fac.names[i])
-        dose=as.numeric(as.character(as.vector(unlist(fatores[,i]))))
+        dose=as.numeric(as.vector(unlist(fatores[,i])))
         grafico=polynomial(dose,resp,grau = grau)
         cat(green("To edit graphical parameters, I suggest analyzing using the \"polynomial\" command\n"))
         cat(green(bold("\n------------------------------------------")))}
@@ -582,7 +580,7 @@ FAT3DIC=function(f1,
               print(sk)}}
           }
         if(quali[1]==FALSE){
-            Fator1=fator1a#as.numeric(as.character(Fator1))
+            Fator1=fator1a
             colint1=polynomial2(Fator1,
                                 response,
                                 Fator2,

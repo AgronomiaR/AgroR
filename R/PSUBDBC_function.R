@@ -390,8 +390,13 @@ PSUBDBC=function(f1,
       if(quali[i]==FALSE){
         # dose=as.numeric(as.character(as.vector(unlist(fat[i]))))
         dose=as.vector(unlist(fata[i]))
-        grafico=polynomial(dose, resp, grau = grau, ylab=ylab, xlab=xlab, posi=posi,point=point,
-              theme=theme, textsize=textsize, family=family)
+        grafico=polynomial(dose,
+                           resp,
+                           grau = grau, ylab = ylab,
+                           xlab = xlab, posi = posi, point = point,
+                           theme = theme, textsize = textsize,
+                           family=family,DFres = num(tab[3*i,1]),
+                           SSq=num(tab[3*i,2]))
         grafico=grafico[[1]]}
       graficos[[i+1]]=grafico
     }
@@ -759,7 +764,9 @@ PSUBDBC=function(f1,
                             posi= posi,
                             ylim=ylim,
                             textsize=textsize,
-                            family=family)
+                            family=family,
+                            DFres = num(tab.f1f2[nv2+1,1]),
+                            SSq = num(tab.f1f2[nv2+1,2]))
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf=list(grafico,NA)}
       }
@@ -792,7 +799,8 @@ PSUBDBC=function(f1,
           }}
         if (mcomp == "lsd"){
           for (i in 1:nv1) {
-            lsd=LSD(resp[fat[, 1] == l1[i]], fat[,2][fat[, 1] == l1[i]], num(tab.f2f1[nv1 +1, 1]),
+            lsd=LSD(resp[fat[, 1] == l1[i]], fat[,2][fat[, 1] == l1[i]],
+                    num(tab.f2f1[nv1 +1, 1]),
                          num(tab.f2f1[nv1 + 1, 2])/num(tab.f2f1[nv1 +1, 1]),alpha.t)
             colnames(lsd$groups)=c("resp","groups")
             if(transf !="1"){lsd$groups$respo=tapply(response[fat[, 1] == l1[i]],
@@ -833,7 +841,9 @@ PSUBDBC=function(f1,
                             posi = posi,
                             ylim=ylim,
                             textsize=textsize,
-                            family=family)
+                            family=family,
+                            DFres = num(tab.f2f1[nv1 +1, 1]),
+                            SSq = num(tab.f2f1[nv1 + 1, 2]))
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf[[2]]=grafico
           grafico=graf}
@@ -902,7 +912,9 @@ PSUBDBC=function(f1,
                                   posi=posi,
                                   ylim=ylim,
                                   textsize=textsize,
-                                  family=family)
+                                  family=family,
+                                  DFres = num(tab.f1f2[nv2+1,1]),
+                                  SSq = num(tab.f1f2[nv2+1,2]))
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf=list(grafico,NA)}
       }
@@ -970,7 +982,9 @@ PSUBDBC=function(f1,
                                   theme=theme,point=point,
                                   posi = posi,ylim=ylim,
                                   textsize=textsize,
-                                  family=family)
+                                  family=family,
+                                  DFres = num(tab.f2f1[nv1 +1, 1]),
+                                  SSq = num(tab.f2f1[nv1 + 1, 2]))
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf[[2]]=grafico
           grafico=graf}

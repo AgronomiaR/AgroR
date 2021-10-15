@@ -24,7 +24,9 @@ polynomial2_color(
   pointsize = 5,
   linesize = 0.8,
   separate = c("(\\"", "\\")"),
-  n = NA
+  n = NA,
+  DFres = NA,
+  SSq = NA
 )
 }
 \arguments{
@@ -67,6 +69,10 @@ polynomial2_color(
 \item{separate}{Separation between treatment and equation (\emph{default} is c("(\"","\")"))}
 
 \item{n}{Number of decimal places for regression equations}
+
+\item{DFres}{Residue freedom degrees}
+
+\item{SSq}{Sum of squares of the residue}
 }
 \value{
 Returns two or more linear, quadratic or cubic regression analyzes.

@@ -134,9 +134,6 @@ FAT2DBC=function(f1,
   lf2 <- levels(Fator2)
   fac.names = c("F1", "F2")
   fatores <- data.frame(Fator1, Fator2)
-  # ================================
-  # Transformacao de dados
-  # ================================
   if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
   if(transf==0){resp=log(response)}
   if(transf==0.5){resp=sqrt(response)}
@@ -144,6 +141,7 @@ FAT2DBC=function(f1,
   if(transf==-1){resp=1/response}
   graph=data.frame(Fator1,Fator2,resp)
   a=anova(aov(resp~Fator1*Fator2+bloco))
+  ab=anova(aov(response~Fator1*Fator2+bloco))
   b=aov(resp~Fator1*Fator2+bloco)
   anava=a
   colnames(anava)=c("GL","SQ","QM","Fcal","p-value")
@@ -185,7 +183,6 @@ FAT2DBC=function(f1,
     theme_classic()+theme(axis.text.y = element_text(size=12),
                           axis.text.x = element_blank())+
     geom_hline(yintercept = c(0,-3,3),lty=c(1,2,2),color="red",size=1)
-  # print(residplot)
 
   cat(green(bold("\n-----------------------------------------------------------------\n")))
   cat(green(bold("Normality of errors")))
@@ -272,7 +269,6 @@ FAT2DBC=function(f1,
         if(mcomp=="sk"){
         letra=SK(b,colnames(fatores[i]))
         letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-        #letra1$resp=as.numeric(as.character(letra1$resp))
         if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           letra <- duncan(b, colnames(fatores[i]), alpha=alpha.t)
@@ -357,7 +353,6 @@ FAT2DBC=function(f1,
       cat("\n\n")
       }
       if(quali[i]==FALSE){
-        # dose=as.numeric(as.character(as.vector(unlist(fatores[i]))))
         dose=as.vector(unlist(fatoresa[i]))
         grafico=polynomial(dose,
                            resp,
@@ -368,7 +363,9 @@ FAT2DBC=function(f1,
                            theme=theme,
                            textsize=textsize,
                            point=point,
-                           family=family)
+                           family=family,
+                           SSq=ab$`Sum Sq`[5],
+                           DFres = ab$Df[5])
         grafico=grafico[[1]]}
     graficos[[i+1]]=grafico}}
     graficos[[1]]=residplot
@@ -623,7 +620,9 @@ FAT2DBC=function(f1,
                             posi=posi,
                             ylim=ylim,
                             textsize=textsize,
-                            family=family)
+                            family=family,
+                            SSq=ab$`Sum Sq`[5],
+                            DFres = ab$Df[5])
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf=list(grafico,NA)}
 
@@ -695,7 +694,9 @@ FAT2DBC=function(f1,
                             point=point,
                             textsize=textsize,
                             family=family,
-                            ylim=ylim)
+                            ylim=ylim,
+                            SSq=ab$`Sum Sq`[5],
+                            DFres = ab$Df[5])
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf[[2]]=grafico
           grafico=graf}
@@ -771,7 +772,9 @@ FAT2DBC=function(f1,
                                   posi=posi,
                                   ylim=ylim,
                                   textsize=textsize,
-                                  family=family)
+                                  family=family,
+                                  SSq=ab$`Sum Sq`[5],
+                                  DFres = ab$Df[5])
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf=list(grafico,NA)}
 
@@ -844,7 +847,9 @@ FAT2DBC=function(f1,
                                   posi=posi,
                                   ylim=ylim,
                                   textsize=textsize,
-                                  family=family)
+                                  family=family,
+                                  SSq=ab$`Sum Sq`[5],
+                                  DFres = ab$Df[5])
         if(quali[1]==FALSE & quali[2]==FALSE){
           graf[[2]]=grafico
           grafico=graf}

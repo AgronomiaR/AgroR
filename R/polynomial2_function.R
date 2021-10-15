@@ -23,6 +23,8 @@
 #' @param linesize line size (Trendline and Error Bar)
 #' @param separate Separation between treatment and equation (\emph{default} is c("(\"","\")"))
 #' @param n Number of decimal places for regression equations
+#' @param SSq Sum of squares of the residue
+#' @param DFres Residue freedom degrees
 #' @keywords regression
 #' @keywords Experimental
 #' @seealso \link{polynomial}, \link{polynomial2_color}
@@ -55,16 +57,19 @@ polynomial2=function(fator1,
                      pointsize=3,
                      linesize=0.8,
                      separate=c("(\"","\")"),
-                     n=NA){
+                     n=NA,
+                     DFres=NA,
+                     SSq=NA){
   if(is.na(width.bar)==TRUE){width.bar=0.05*mean(fator1)}
   requireNamespace("crayon")
   requireNamespace("ggplot2")
+  anovaquali=anova(aov(resp~as.factor(fator1)*fator2))
   Fator2=fator2=as.factor(fator2)
   if(is.na(color)[1]==TRUE){color=1:length(levels(Fator2))}
   if(is.na(grau)[1]==TRUE){grau=rep(1,length(levels(Fator2)))}
   curvas=c()
   texto=c()
-  #desvios=c()
+  desvios=c()
   data=data.frame(fator1,fator2,resp)
   grafico=ggplot(data,aes(y=resp,x=fator1))+
     theme+
@@ -100,8 +105,46 @@ polynomial2=function(fator1,
     if(adj==2){mod=lm(y~x+I(x^2))}
     if(adj==3){mod=lm(y~x+I(x^2)+I(x^3))}
     if(adj==1 | adj==2 | adj==3){
-      ajuste=aov(y~as.factor(x))
+      modf1=lm(y~x); modf1ql=anova(modf1)
+      modf2=lm(y~x+I(x^2)); modf2ql=anova(modf2)
+      modf3=lm(y~x+I(x^2)+I(x^3)); modf3ql=anova(modf3)
+      modf1q=aov(y~as.factor(x))
+      fadj1=anova(modf1,modf1q)[2,c(3,4,5,6)]
+      fadj2=anova(modf2,modf1q)[2,c(3,4,5,6)]
+      fadj3=anova(modf3,modf1q)[2,c(3,4,5,6)]
+      if(is.na(DFres)==TRUE){DFres=anovaquali[4,1]}
+      if(is.na(SSq)==TRUE){SSq=anovaquali[4,2]}
+      df1=c(modf3ql[1,1],fadj1[1,1],DFres)
+      df2=c(modf3ql[1:2,1],fadj2[1,1],DFres)
+      df3=c(modf3ql[1:3,1],fadj3[1,1],DFres)
+      sq1=c(modf3ql[1,2],fadj1[1,2],SSq)
+      sq2=c(modf3ql[1:2,2],fadj2[1,2],SSq)
+      sq3=c(modf3ql[1:3,2],fadj3[1,2],SSq)
+      qm1=sq1/df1
+      qm2=sq2/df2
+      qm3=sq3/df3
+      if(adj==1){fa1=data.frame(cbind(df1,sq1,qm1))
+      fa1$f1=c(fa1$qm1[1:2]/fa1$qm1[3],NA)
+      fa1$p=c(pf(fa1$f1[1:2],fa1$df1[1:2],fa1$df1[3],lower.tail = F),NA)
+      rownames(fa1)=c("Linear","Deviation","Residual")
+      fa=fa1}
+
+      if(adj==2){fa2=data.frame(cbind(df2,sq2,qm2))
+      fa2$f2=c(fa2$qm2[1:3]/fa2$qm2[4],NA)
+      fa2$p=c(pf(fa2$f2[1:3],fa2$df2[1:3],fa2$df2[4],lower.tail = F),NA)
+      rownames(fa2)=c("Linear","Quadratic","Deviation","Residual")
+      fa=fa2}
+
+      if(adj==3){
+      fa3=data.frame(cbind(df3,sq3,qm3))
+      fa3$f3=c(fa3$qm3[1:4]/fa3$qm3[5],NA)
+      fa3$p=c(pf(fa3$f3[1:4],fa3$df3[1:4],fa3$df3[5],lower.tail = F),NA)
+      rownames(fa3)=c("Linear","Quadratic","Cubic","Deviation","Residual")
+      fa=fa3}
+      colnames(fa)=c("Df","SSq","MSQ","F","p-value")
+      desvios[[i]]=as.matrix(fa)
       curvas[[i]]=summary(mod)$coefficients
+      names(desvios)[i]=paste("Anova",levels(Fator2)[i])
       names(curvas)[i]=levels(Fator2)[i]
       }
     fats=as.character(unique(Fator2)[i])
@@ -177,6 +220,10 @@ polynomial2=function(fator1,
   cat("Regression Models")
   cat("\n----------------------------------------------------\n")
   print(curvas)
+  cat("\n----------------------------------------------------\n")
+  cat("Anova")
+  cat("\n----------------------------------------------------\n")
+  print(desvios,na.print=" ")
   grafico=grafico+
     scale_linetype_manual(name=legend.title,values = color,drop=FALSE,
                                      label=parse(text=paste(

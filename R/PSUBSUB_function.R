@@ -88,8 +88,10 @@ PSUBSUBDBC=function(f1,
   anava=rbind(data.frame(a$`Error: bloco:Fator1`[[1]]),
               data.frame(a$`Error: bloco:Fator1:paste(Fator1, Fator2)`[[1]]),
               data.frame(a$`Error: Within`[[1]]))
+  anavap=anava
   anava$F.value=ifelse(is.na(anava$F.value)==TRUE,"",round(anava$F.value,5))
   anava$Pr..F.=ifelse(is.na(anava$Pr..F.)==TRUE,"",round(anava$Pr..F.,5))
+  rownames(anava)=c("F1","Error A","F2","F1 x F2", "Error B", "F3", "F1 x F3", "F2 x F3", "F1 x F2 x F3","Residuals")
   colnames(anava)=c("Df","Sum Sq","Mean Sq","F value","Pr(>F)")
 
   cat(green(bold("\n-----------------------------------------------------------------\n")))
@@ -110,30 +112,29 @@ PSUBSUBDBC=function(f1,
   fatores<-data.frame('fator 1'=fator1,
                       'fator 2' = fator2,
                       'fator 3' = fator3)
-  qmres=c(as.numeric(anava[2,3]),
-          as.numeric(anava[5,3]),
-          as.numeric(anava[10,3]))
-  GL=c(as.numeric(anava[2,1]),
-       as.numeric(anava[5,1]),
-       as.numeric(anava[10,1]))
-  pvalor=c(as.numeric(anava[1,5]),
-           as.numeric(anava[3,5]),
-           as.numeric(anava[6,5]))
+  qmres=c(as.numeric(anavap[2,3]),
+          as.numeric(anavap[5,3]),
+          as.numeric(anavap[10,3]))
+  GL=c(as.numeric(anavap[2,1]),
+       as.numeric(anavap[5,1]),
+       as.numeric(anavap[10,1]))
+  pvalor=c(as.numeric(anavap[1,5]),
+           as.numeric(anavap[3,5]),
+           as.numeric(anavap[6,5]))
 
   ################################################################################################
   # Efeitos simples
   ################################################################################################
-  if(as.numeric(anava[9,5])>alpha.f &&
-     as.numeric(anava[8,5])>alpha.f &&
-     as.numeric(anava[7,5])>alpha.f &&
-     as.numeric(anava[4,5])>alpha.f) {
+  if(as.numeric(anavap[9,5])>alpha.f &&
+     as.numeric(anavap[8,5])>alpha.f &&
+     as.numeric(anavap[7,5])>alpha.f &&
+     as.numeric(anavap[4,5])>alpha.f) {
     graficos=list(1,2,3)
     cat(green(bold("\n------------------------------------------\n")))
     cat(green(bold('Non-significant interaction: analyzing the simple effects')))
     cat(green(bold("\n------------------------------------------\n")))
 
     for(i in 1:3){
-      # Comparação múltipla
       if(pvalor[i]<=alpha.f) {
         cat(green(bold("\n------------------------------------------\n")))
         cat(fac.names[i])
@@ -159,6 +160,13 @@ PSUBSUBDBC=function(f1,
                          qmres[i],alpha.t)
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
           print(letra1)}
+        if(mcomp=="sk"){
+          letra1=sk(response,
+                       fatores[,i],
+                       GL[i],
+                       qmres[i]/GL[i],alpha.t)
+          colnames(letra1)=c("resp","groups")
+          print(letra1)}
         }
       if(pvalor[i]>alpha.f) {
         cat(fac.names[i])
@@ -183,8 +191,8 @@ PSUBSUBDBC=function(f1,
       ((qmres[1]^2)/GL[1]+(((nv2-1)*qmres[2])^2)/GL[2]))
   nf1f2=round(nf1f2)
 
-  if(as.numeric(anava[9,5])>alpha.f &&
-     as.numeric(anava[4,5])<=alpha.f){
+  if(as.numeric(anavap[9,5])>alpha.f &&
+     as.numeric(anavap[4,5])<=alpha.f){
     cat(green(bold("\n------------------------------------------\n")))
     cat(green(bold("Interaction",paste(fac.names[1],'*',fac.names[2],sep='')," significant: unfolding the interaction")))
     cat(green(bold("\n------------------------------------------\n")))
@@ -339,6 +347,33 @@ PSUBSUBDBC=function(f1,
       letra1=unlist(duncangrafico1)
       letra1=toupper(letra1)}
 
+    if(mcomp=="sk"){
+      skgrafico=c()
+      ordem=c()
+      for (i in 1:nv2) {
+        trati=fatores[, 1][Fator2 == lf2[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator2 == lf2[i]]
+        sk=sk(respi,trati,nf1f2,qmresf1f2/nf1f2,alpha.t)
+        skgrafico[[i]]=sk[levels(trati),2]
+        ordem[[i]]=rownames(sk[levels(trati),])
+      }
+      letra=unlist(skgrafico)
+      datag=data.frame(letra,ordem=unlist(ordem))
+      datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
+      datag=datag[order(datag$ordem),]
+      letra=datag$letra
+
+      skgrafico1=c()
+      for (i in 1:nv1) {
+        trati=fatores[, 2][Fator1 == lf1[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator1 == lf1[i]]
+        sk=sk(respi,trati,GL[2],qmres[2]/GL[2],alpha.t)
+        skgrafico1[[i]]=sk[levels(trati),2]
+      }
+      letra1=unlist(skgrafico1)
+      letra1=toupper(letra1)}
     f1=rep(levels(Fator1),e=length(levels(Fator2)))
     f2=rep(unique(as.character(Fator2)),length(levels(Fator1)))
     media=tapply(response,paste(Fator1,Fator2), mean, na.rm=TRUE)[unique(paste(f1,f2))]
@@ -363,7 +398,7 @@ PSUBSUBDBC=function(f1,
 
 
     #Checar o Fator3
-    if(as.numeric(anava[7,5])>alpha.f && as.numeric(anava[8,5])>alpha.f) {
+    if(as.numeric(anavap[7,5])>alpha.f && as.numeric(anavap[8,5])>alpha.f) {
       if(pvalor[3]<=alpha.f) {
         cat(green(bold("\n------------------------------------------\n")))
         cat(green(italic('Analyzing the simple effects of the factor ',fac.names[3])))
@@ -389,8 +424,8 @@ PSUBSUBDBC=function(f1,
   (nf1f3=((qmres[1]+(nv3-1)*qmres[3])^2)/
       ((qmres[1]^2)/GL[1]+(((nv3-1)*qmres[3])^2)/GL[3]))
   nf1f3=round(nf1f3)
-  if(as.numeric(anava[9,5])>alpha.f &&
-     as.numeric(anava[7,5])<=alpha.f){
+  if(as.numeric(anavap[9,5])>alpha.f &&
+     as.numeric(anavap[7,5])<=alpha.f){
     cat(green(bold("\n------------------------------------------\n")))
     cat(green(bold("\nInteraction",paste(fac.names[1],'*',fac.names[3],sep='')," significant: unfolding the interaction\n")))
     cat(green(bold("\n------------------------------------------\n")))
@@ -540,7 +575,31 @@ PSUBSUBDBC=function(f1,
         duncangrafico1[[i]]=duncan$groups[levels(trati),2]}
       letra1=unlist(duncangrafico1)
       letra1=toupper(letra1)}
+    if(mcomp=="sk"){
+      skgrafico=c()
+      ordem=c()
+      for (i in 1:nv3) {
+        trati=fatores[, 1][Fator3 == lf3[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator3 == lf3[i]]
+        sk=sk(respi,trati,nf1f3,qmresf1f3/nf1f3,alpha.t)
+        skgrafico[[i]]=sk[levels(trati),2]
+        ordem[[i]]=rownames(sk[levels(trati),])}
+      letra=unlist(skgrafico)
+      datag=data.frame(letra,ordem=unlist(ordem))
+      datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
+      datag=datag[order(datag$ordem),]
+      letra=datag$letra
 
+      skgrafico1=c()
+      for (i in 1:nv1) {
+        trati=fatores[, 3][Fator1 == lf1[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator1 == lf1[i]]
+        sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
+        skgrafico1[[i]]=sk[levels(trati),2]}
+      letra1=unlist(skgrafico1)
+      letra1=toupper(letra1)}
     f1=rep(levels(Fator1),e=length(levels(Fator3)))
     f3=rep(unique(as.character(Fator3)),length(levels(Fator1)))
     media=tapply(response,paste(Fator1,Fator3), mean, na.rm=TRUE)[unique(paste(f1,f3))]
@@ -560,7 +619,7 @@ PSUBSUBDBC=function(f1,
     message(black("\nAverages followed by the same lowercase letter in the column and \nuppercase in the row do not differ by the", mcomp, "(p<",alpha.t,")\n"))
 
     #Checar o Fator2
-    if(as.numeric(anava[4,5])>alpha.f && as.numeric(anava[6,5])>alpha.f) {
+    if(as.numeric(anavap[4,5])>alpha.f && as.numeric(anavap[6,5])>alpha.f) {
       i=2
       cat(green(bold("\n------------------------------------------\n")))
       cat(green(italic('Analyzing the simple effects of the factor ',fac.names[2])))
@@ -585,8 +644,8 @@ PSUBSUBDBC=function(f1,
   (nf2f3=((qmres[2]+(nv3-1)*qmres[3])^2)/
     ((qmres[2]^2)/GL[2]+(((nv3-1)*qmres[3])^2)/GL[3]))
   nf2f3=round(nf2f3)
-  if(as.numeric(anava[9,5])>alpha.f &&
-     as.numeric(anava[8,5])<=alpha.f){
+  if(as.numeric(anavap[9,5])>alpha.f &&
+     as.numeric(anavap[8,5])<=alpha.f){
     cat(green(bold("\n------------------------------------------\n")))
     cat(green(bold("Interaction",paste(fac.names[2],'*',fac.names[3],sep='')," significant: unfolding the interaction")))
     cat(green(bold("\n------------------------------------------\n")))
@@ -658,12 +717,10 @@ PSUBSUBDBC=function(f1,
       trati=fatores[, 2][Fator3 == lf3[i]]
       trati=factor(trati,levels = unique(trati))
       respi=response[Fator3 == lf3[i]]
-      mod=aov(respi~trati)
       tukey=TUKEY(respi,trati,nf2f3,qmresf2f3,alpha.t)
       tukeygrafico[[i]]=tukey$groups[levels(trati),2]
       ordem[[i]]=rownames(tukey$groups[levels(trati),])}
     letra=unlist(tukeygrafico)
-    datag=data.frame(letra,ordem=unlist(ordem))
     datag=data.frame(letra,ordem=unlist(ordem))
     datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
     datag=datag[order(datag$ordem),]
@@ -673,7 +730,6 @@ PSUBSUBDBC=function(f1,
       trati=fatores[, 3][Fator2 == lf2[i]]
       trati=factor(trati,levels = unique(trati))
       respi=response[Fator2 == lf2[i]]
-      mod=aov(respi~trati)
       tukey=TUKEY(respi,trati,GL[3],qmres[3],alpha.t)
       tukeygrafico1[[i]]=tukey$groups[levels(trati),2]}
     letra1=unlist(tukeygrafico1)
@@ -685,12 +741,10 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 2][Fator3 == lf3[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator3 == lf3[i]]
-        mod=aov(respi~trati)
         lsd=LSD(respi,trati,nf2f3,qmresf2f3,alpha.t)
         lsdgrafico[[i]]=lsd$groups[levels(trati),2]
         ordem[[i]]=rownames(lsd$groups[levels(trati),])}
       letra=unlist(lsdgrafico)
-      datag=data.frame(letra,ordem=unlist(ordem))
       datag=data.frame(letra,ordem=unlist(ordem))
       datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
       datag=datag[order(datag$ordem),]
@@ -700,7 +754,6 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 3][Fator2 == lf2[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator2 == lf2[i]]
-        mod=aov(respi~trati)
         lsd=LSD(respi,trati,GL[3],qmres[3],alpha.t)
         lsdgrafico1[[i]]=lsd$groups[levels(trati),2]}
       letra1=unlist(lsdgrafico1)
@@ -712,12 +765,10 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 2][Fator3 == lf3[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator3 == lf3[i]]
-        mod=aov(respi~trati)
         duncan=duncan(respi,trati,nf2f3,qmresf2f3,alpha.t)
         duncangrafico[[i]]=duncan$groups[levels(trati),2]
         ordem[[i]]=rownames(duncan$groups[levels(trati),])}
       letra=unlist(duncangrafico)
-      datag=data.frame(letra,ordem=unlist(ordem))
       datag=data.frame(letra,ordem=unlist(ordem))
       datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
       datag=datag[order(datag$ordem),]
@@ -727,12 +778,34 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 3][Fator2 == lf2[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator2 == lf2[i]]
-        mod=aov(respi~trati)
         duncan=duncan(respi,trati,GL[3],qmres[3],alpha.t)
         duncangrafico1[[i]]=duncan$groups[levels(trati),2]}
       letra1=unlist(duncangrafico1)
       letra1=toupper(letra1)}
-
+    if(mcomp=="sk"){
+      skgrafico=c()
+      ordem=c()
+      for (i in 1:nv3) {
+        trati=fatores[, 2][Fator3 == lf3[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator3 == lf3[i]]
+        sk=sk(respi,trati,nf2f3,qmresf2f3/nf2f3,alpha.t)
+        skgrafico[[i]]=sk[levels(trati),2]
+        ordem[[i]]=rownames(sk[levels(trati),])}
+      letra=unlist(skgrafico)
+      datag=data.frame(letra,ordem=unlist(ordem))
+      datag$ordem=factor(datag$ordem,levels = unique(datag$ordem))
+      datag=datag[order(datag$ordem),]
+      letra=datag$letra
+      skgrafico1=c()
+      for (i in 1:nv2) {
+        trati=fatores[, 3][Fator2 == lf2[i]]
+        trati=factor(trati,levels = unique(trati))
+        respi=response[Fator2 == lf2[i]]
+        sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
+        skgrafico1[[i]]=sk[levels(trati),2]}
+      letra1=unlist(skgrafico1)
+      letra1=toupper(letra1)}
     f2=rep(levels(Fator2),e=length(levels(Fator3)))
     f3=rep(unique(as.character(Fator3)),length(levels(Fator2)))
     media=tapply(response,paste(Fator2,Fator3), mean, na.rm=TRUE)[unique(paste(f2,f3))]
@@ -753,7 +826,7 @@ PSUBSUBDBC=function(f1,
     print(matriz)
     message(black("\nAverages followed by the same lowercase letter in the column and \nuppercase in the row do not differ by the Tukey (p<",alpha.t,")\n"))
     #Checar o Fator1
-    if(as.numeric(anava[4,5])>alpha.f && as.numeric(anava[7,5])>alpha.f) {
+    if(as.numeric(anavap[4,5])>alpha.f && as.numeric(anavap[7,5])>alpha.f) {
       i<-1
       if(pvalor[i]<=alpha.f) {
         cat(green(bold("\n------------------------------------------\n")))
@@ -780,85 +853,11 @@ PSUBSUBDBC=function(f1,
 
   glconj=c(nf1f2,nf1f3,nf2f3)
   qmconj=c(qmresf1f2,qmresf1f3,qmresf2f3)
-  if(as.numeric(anava[9,5])<=alpha.f){
+  if(as.numeric(anavap[9,5])<=alpha.f){
     cat(green(bold("\n------------------------------------------\n")))
     cat(green(bold("Interaction",paste(fac.names[1],'*',fac.names[2],'*',fac.names[3],sep='')," significant: unfolding the interaction")))
     cat(green(bold("\n------------------------------------------\n")))
 
-    cat(green(bold("\n------------------------------------------\n")))
-    cat("Analyzing ", fac.names[1], ' inside of each level of ', fac.names[2], 'and',fac.names[3])
-    cat(green(bold("\n------------------------------------------\n")))
-
-    # desdobrando f1
-    qmresf2f3=(qmres[2]+(nv3-1)*qmres[3])/nv3
-    nf2f3=((qmres[2]+(nv3-1)*qmres[3])^2)/
-      ((qmres[2]^2)/GL[2]+(((nv3-1)*qmres[3])^2)/GL[3])
-    nf2f3=round(nf2f3)
-    mod=aov(response~Fator3/Fator1/Fator2)
-    summary(mod)
-    l2<-vector('list',(nv1*nv3))
-    nomes=expand.grid(names(summary(Fator1)),
-                      names(summary(Fator3)))
-    names(l2)<-paste(nomes$Var1,nomes$Var2)
-    v<-numeric(0)
-    for(j in 1:(nv3*nv1)) {
-      for(i in 0:(nv2-2)) v<-cbind(v,i*nv1*nv3+j)
-      l2[[j]]<-v
-      v<-numeric(0)
-    }
-    dtf1a=data.frame(summary(mod,split=list('Fator3:Fator1:Fator2'=l2))[[1]])
-    nl=nrow(dtf1a)
-    dtf1=dtf1a[-c(1,2,3,nl),]
-    nline=nrow(dtf1)
-    for(i in 1:nline){
-      dtf1$F.value[i]=dtf1$Mean.Sq[i]/qmresf2f3
-      dtf1$Pr..F.[i]=1-pf(dtf1$F.value[i],dtf1$Df[i],nf2f3)
-    }
-    f11=dtf1a[3,]
-    desd=rbind(f11,
-               dtf1,
-               c(nf2f3,qmresf2f3/nf2f3,qmresf2f3,NA,NA))
-    nline1=nrow(desd)
-    rownames(desd)[nline1]="Residuals combined"
-    colnames(desd)=c("Df","Sum sq","Mean Sq", "F value","Pr(>F)")
-    print(as.matrix(desd),na.print = "")
-
-    ii<-0
-    for(i in 1:nv2) {
-      for(j in 1:nv3) {
-        ii<-ii+1
-        cat("\n\n------------------------------------------")
-        cat('\n',fac.names[1],' within the combination of levels ',lf2[i],' of  ',fac.names[2],' and ',lf3[j],' of  ',fac.names[3],"\n")
-        cat("------------------------------------------\n")
-        if(mcomp=="tukey"){
-        tukey=TUKEY(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                       fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
-                       nf1f3,
-                       qmresf1f3,
-                       alpha.t)
-        tukey=tukey$groups;colnames(tukey)=c("Mean","letters")
-        print(tukey)}
-        if(mcomp=="lsd"){
-          lsd=LSD(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                         fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
-                         nf1f3,
-                         qmresf1f3,
-                         alpha.t)
-          lsd=lsd$groups;colnames(lsd)=c("Mean","letters")
-          print(lsd)}
-        if(mcomp=="duncan"){
-          duncan=duncan(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                         fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
-                         nf1f3,
-                         qmresf1f3,
-                         alpha.t)
-          duncan=duncan$groups;colnames(duncan)=c("Mean","letters")
-          print(duncan)}
-
-        }
-    }
-
-    cat('\n\n')
 
     cat(green(bold("\n------------------------------------------\n")))
     cat("Analyzing ", fac.names[2], ' inside of each level of ', fac.names[1], 'and',fac.names[3])
@@ -899,6 +898,88 @@ PSUBSUBDBC=function(f1,
     print(as.matrix(desd),na.print="")
 
     ii<-0
+    for(i in 1:nv2) {
+      for(j in 1:nv3) {
+        ii<-ii+1
+        cat("\n\n------------------------------------------")
+        cat('\n',fac.names[1],' within the combination of levels ',lf2[i],' of  ',fac.names[2],' and ',lf3[j],' of  ',fac.names[3],"\n")
+        cat("------------------------------------------\n")
+        if(mcomp=="tukey"){
+        tukey=TUKEY(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+                       fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
+                       nf1f3,
+                       qmresf1f3,
+                       alpha.t)
+        tukey=tukey$groups;colnames(tukey)=c("resp","letters")
+        print(tukey)}
+        if(mcomp=="lsd"){
+          lsd=LSD(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+                         fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
+                         nf1f3,
+                         qmresf1f3,
+                         alpha.t)
+          lsd=lsd$groups;colnames(lsd)=c("resp","letters")
+          print(lsd)}
+        if(mcomp=="duncan"){
+          duncan=duncan(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+                         fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
+                         nf1f3,
+                         qmresf1f3,
+                         alpha.t)
+          duncan=duncan$groups;colnames(duncan)=c("resp","letters")
+          print(duncan)}
+        if(mcomp=="sk"){
+          sk=sk(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+                        fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
+                        nf1f3,
+                        qmresf1f3,
+                        alpha.t);colnames(sk)=c("resp","letters")
+          print(sk)}
+
+        }
+    }
+
+    cat('\n\n')
+
+    cat(green(bold("\n------------------------------------------\n")))
+    cat("Analyzing ", fac.names[1], ' inside of each level of ', fac.names[2], 'and',fac.names[3])
+    cat(green(bold("\n------------------------------------------\n")))
+
+    # desdobrando f1
+    qmresf2f3=(qmres[2]+(nv3-1)*qmres[3])/nv3
+    nf2f3=((qmres[2]+(nv3-1)*qmres[3])^2)/
+      ((qmres[2]^2)/GL[2]+(((nv3-1)*qmres[3])^2)/GL[3])
+    nf2f3=round(nf2f3)
+    mod=aov(response~Fator3/Fator1/Fator2)
+    summary(mod)
+    l2<-vector('list',(nv1*nv3))
+    nomes=expand.grid(names(summary(Fator1)),
+                      names(summary(Fator3)))
+    names(l2)<-paste(nomes$Var1,nomes$Var2)
+    v<-numeric(0)
+    for(j in 1:(nv3*nv1)) {
+      for(i in 0:(nv2-2)) v<-cbind(v,i*nv1*nv3+j)
+      l2[[j]]<-v
+      v<-numeric(0)
+    }
+    dtf1a=data.frame(summary(mod,split=list('Fator3:Fator1:Fator2'=l2))[[1]])
+    nl=nrow(dtf1a)
+    dtf1=dtf1a[-c(1,2,3,nl),]
+    nline=nrow(dtf1)
+    for(i in 1:nline){
+      dtf1$F.value[i]=dtf1$Mean.Sq[i]/qmresf2f3
+      dtf1$Pr..F.[i]=1-pf(dtf1$F.value[i],dtf1$Df[i],nf2f3)
+    }
+    f11=dtf1a[3,]
+    desd=rbind(f11,
+               dtf1,
+               c(nf2f3,qmresf2f3/nf2f3,qmresf2f3,NA,NA))
+    nline1=nrow(desd)
+    rownames(desd)[nline1]="Residuals combined"
+    colnames(desd)=c("Df","Sum sq","Mean Sq", "F value","Pr(>F)")
+    print(as.matrix(desd),na.print = "")
+
+    ii<-0
     for(k in 1:nv1) {
       for(j in 1:nv3) {
         ii<-ii+1
@@ -911,7 +992,7 @@ PSUBSUBDBC=function(f1,
                        nf2f3,
                        qmresf2f3,
                        alpha.t)
-        tukey=tukey$groups;colnames(tukey)=c("Mean","letters")
+        tukey=tukey$groups;colnames(tukey)=c("resp","letters")
         print(tukey)}
         if(mcomp=="lsd"){
           lsd=LSD(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
@@ -919,7 +1000,7 @@ PSUBSUBDBC=function(f1,
                          nf2f3,
                          qmresf2f3,
                          alpha.t)
-          lsd=lsd$groups;colnames(lsd)=c("Mean","letters")
+          lsd=lsd$groups;colnames(lsd)=c("resp","letters")
           print(lsd)}
         if(mcomp=="duncan"){
           duncan=duncan(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
@@ -927,9 +1008,15 @@ PSUBSUBDBC=function(f1,
                          nf2f3,
                          qmresf2f3,
                          alpha.t)
-          duncan=duncan$groups;colnames(duncan)=c("Mean","letters")
+          duncan=duncan$groups;colnames(duncan)=c("resp","letters")
           print(duncan)}
-
+        if(mcomp=="sk"){
+          sk=sk(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+                        fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
+                        nf2f3,
+                        qmresf2f3/nf2f3,
+                        alpha.t);colnames(sk)=c("resp","letters")
+          print(sk)}
       }
     }
 
@@ -966,7 +1053,7 @@ PSUBSUBDBC=function(f1,
                        GL[3],
                        qmres[3],
                        alpha.t)
-        tukey=tukey$groups;colnames(tukey)=c("Mean","letters")
+        tukey=tukey$groups;colnames(tukey)=c("resp","letters")
         print(tukey)}
         if(mcomp=="lsd"){
           lsd=LSD(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
@@ -974,7 +1061,7 @@ PSUBSUBDBC=function(f1,
                          GL[3],
                          qmres[3],
                          alpha.t)
-          lsd=lsd$groups;colnames(lsd)=c("Mean","letters")
+          lsd=lsd$groups;colnames(lsd)=c("resp","letters")
           print(lsd)}
         if(mcomp=="duncan"){
           duncan=duncan(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
@@ -982,8 +1069,17 @@ PSUBSUBDBC=function(f1,
                          GL[3],
                          qmres[3],
                          alpha.t)
-          duncan=duncan$groups;colnames(duncan)=c("Mean","letters")
+          duncan=duncan$groups;colnames(duncan)=c("resp","letters")
           print(duncan)}
+        if(mcomp=="sk"){
+          sk=sk(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
+                        fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
+                        GL[3],
+                        qmres[3]/GL[3],
+                        alpha.t)
+          colnames(sk)=c("resp","letters")
+          print(sk)}
+
         }
     }
   }

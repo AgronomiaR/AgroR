@@ -386,9 +386,19 @@ PSUBDIC=function(f1,
                 # dose=as.numeric(as.character(as.vector(unlist(fat[i]))))
                 dose=as.vector(unlist(fata[i]))
 
-            grafico=polynomial(dose,resp,grau = grau,ylab=ylab,xlab=xlab,point=point,
-                          theme=theme,posi=posi,textsize=textsize, se=errorbar,
-                          family=family)
+            grafico=polynomial(dose,
+                               resp,
+                               grau = grau,
+                               ylab=ylab,
+                               xlab=xlab,
+                               point=point,
+                               theme=theme,
+                               posi=posi,
+                               textsize=textsize,
+                               se=errorbar,
+                               family=family,
+                               DFres = num(tab[2*i,1]),
+                               SSq=num(tab[2*i,2]))
             grafico=grafico[[1]]}
             graficos[[i+1]]=grafico
 
@@ -724,7 +734,8 @@ PSUBDIC=function(f1,
                     }
                 if (mcomp == "lsd"){
                     for (i in 1:nv2) {
-                        lsd=LSD(resp[fat[,2]==l2[i]],fat[,1][fat[,2]==l2[i]],num(tab.f1f2[nv2+1,1]),num(tab.f1f2[nv2+1,2])/num(tab.f1f2[nv2+1,1]),alpha.t)
+                        lsd=LSD(resp[fat[,2]==l2[i]],fat[,1][fat[,2]==l2[i]],
+                                num(tab.f1f2[nv2+1,1]),num(tab.f1f2[nv2+1,2])/num(tab.f1f2[nv2+1,1]),alpha.t)
                         colnames(lsd$groups)=c("resp","groups")
                         if(transf !="1"){lsd$groups$respo=tapply(response[Fator2 == l2[i]],fat[,1][fat[,2]==l2[i]],mean, na.rm=TRUE)[rownames(lsd$groups)]}
                         cat("\n----------------------\n")
@@ -738,8 +749,8 @@ PSUBDIC=function(f1,
                         trati=fat[,1][fat[,2]==l2[i]]
                         trati=factor(trati,levels = unique(trati))
                         sk=sk(respi,trati,
-                                     num(tab.f1f2[nv2+1,1]),
-                                     num(tab.f1f2[nv2+1,2]),alpha.t)
+                                     num(tab.f2f1[nv1+1,1]),
+                                     num(tab.f2f1[nv1+1,2]),alpha.t)
                         if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                                          trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
                         cat("\n----------------------\n")
@@ -761,7 +772,9 @@ PSUBDIC=function(f1,
                                     posi=posi,
                                     ylim=ylim,
                                     textsize=textsize,
-                                    family=family)
+                                    family=family,
+                                    DFres = num(tab.f1f2[nv2+1,1]),
+                                    SSq = num(tab.f1f2[nv2+1,2]))
                 if(quali[1]==FALSE & quali[2]==FALSE){
                     graf=list(grafico,NA)}
                 }
@@ -841,7 +854,9 @@ PSUBDIC=function(f1,
                                     posi=posi,
                                     ylim=ylim,
                                     textsize=textsize,
-                                    family=family)
+                                    family=family,
+                                    DFres = num(tab.f2f1[nv1+1,1]),
+                                    SSq = num(tab.f2f1[nv1+1,2]))
                 if(quali[1]==FALSE & quali[2]==FALSE){
                     graf[[2]]=grafico
                     grafico=graf}
@@ -851,7 +866,8 @@ PSUBDIC=function(f1,
             if(quali[2]==FALSE){
                 if (mcomp == "tukey"){
                     for (i in 1:nv2) {
-                        tukey=TUKEY(resp[fat[,2]==l2[i]],fat[,1][fat[,2]==l2[i]],num(tab.f1f2[nv2+1,1]),num(tab.f1f2[nv2+1,2])/num(tab.f1f2[nv2+1,1]),alpha.t)
+                        tukey=TUKEY(resp[fat[,2]==l2[i]],fat[,1][fat[,2]==l2[i]],
+                                    num(tab.f1f2[nv2+1,1]),num(tab.f1f2[nv2+1,2])/num(tab.f1f2[nv2+1,1]),alpha.t)
                         colnames(tukey$groups)=c("resp","groups")
                         if(transf !="1"){tukey$groups$respo=tapply(response[Fator2 == l2[i]],fat[,1][fat[,2]==l2[i]],mean, na.rm=TRUE)[rownames(tukey$groups)]}
                         cat("\n----------------------\n")
@@ -909,7 +925,9 @@ PSUBDIC=function(f1,
                                           posi=posi,
                                           ylim=ylim,
                                           textsize=textsize,
-                                          family=family)
+                                          family=family,
+                                          DFres = num(tab.f1f2[nv2 +1, 1]),
+                                          SSq = num(tab.f1f2[nv2 + 1, 2]))
             if(quali[1]==FALSE & quali[2]==FALSE){
                     graf=list(grafico,NA)}
             }
@@ -990,7 +1008,9 @@ PSUBDIC=function(f1,
                                           posi=posi,
                                           ylim=ylim,
                                           textsize=textsize,
-                                          family=family)
+                                          family=family,
+                                          DFres = num(tab.f2f1[nv1 +1, 1]),
+                                          SSq = num(tab.f2f1[nv1 + 1, 2]))
                 if(quali[1]==FALSE & quali[2]==FALSE){
                     graf[[2]]=grafico
                     grafico=graf}

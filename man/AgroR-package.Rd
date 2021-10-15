@@ -6,6 +6,8 @@
 \alias{AgroR-package}
 \title{AgroR: Experimental Statistics and Graphics for Agricultural Sciences}
 \description{
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
 Performs the analysis of completely randomized experimental designs (CRD), randomized blocks (RBD) and Latin square (LSD), experiments in double and triple factorial scheme (in CRD and RBD), experiments in subdivided plot scheme (in CRD and RBD), subdivided and joint analysis of experiments in CRD and RBD, linear regression analysis, test for two samples. The package performs analysis of variance, ANOVA assumptions and multiple comparison test of means or regression, according to Pimentel-Gomes (2009, ISBN: 978-85-7133-055-9), nonparametric test (Conover, 1999, ISBN: 0471160687), test for two samples, joint analysis of experiments according to Ferreira (2018, ISBN: 978-85-7269-566-4), ANOVA of aligned ranks (Wobbrock, J.O., Findlater, L., Gergle, D., Higgins, JJ (2011), <doi:10.1145/1978942.1978963>) and generalized linear model (glm) for binomial and Poisson family in CRD and RBD (Carvalho, FJ (2019), <doi:10.14393/ufu.te.2019.1244>). It can also be used to obtain descriptive measures and graphics, in addition to correlations and creative graphics used in agricultural sciences (Agronomy, Zootechnics, Food Science and related areas).
 }
 \seealso{

@@ -139,6 +139,7 @@ FAT2DIC=function(f1,
 
   a=anova(aov(resp~Fator1*Fator2))
   b=aov(resp~Fator1*Fator2)
+  ab=anova(aov(response~Fator1*Fator2))
   anava=a
   colnames(anava)=c("GL","SQ","QM","Fcal","p-value")
   respad=b$residuals/sqrt(a$`Mean Sq`[3])
@@ -273,7 +274,6 @@ FAT2DIC=function(f1,
         if(mcomp=="sk"){
           letra=SK(b,colnames(fatores[i]))
           letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-          #letra1$resp=as.numeric(as.character(letra1$resp))
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           letra <- duncan(b, colnames(fatores[i]), alpha=alpha.t)
@@ -323,9 +323,6 @@ FAT2DIC=function(f1,
                 axis.title = element_text(size=textsize,color="black",family=family),
                 legend.position = "none")}
 
-        # ================================
-        # grafico de pontos
-        # ================================
         if(geom=="point"){grafico=ggplot(dadosm,
                                          aes(x=trats,
                                              y=media))
@@ -362,7 +359,6 @@ FAT2DIC=function(f1,
 
       # Regression
       if(quali[i]==FALSE){
-        # dose=as.numeric(as.character(as.vector(unlist(fatores[i]))))
         dose=as.vector(unlist(fatoresa[i]))
         grafico=polynomial(dose,
                            response,
@@ -373,7 +369,9 @@ FAT2DIC=function(f1,
                            theme=theme,
                            textsize=textsize,
                            point=point,
-                           family=family)
+                           family=family,
+                           SSq=ab$`Sum Sq`[4],
+                           DFres = ab$Df[4])
         grafico=grafico[[1]]}
 
       # Ns
@@ -650,7 +648,9 @@ FAT2DIC=function(f1,
                               point=point,
                               textsize=textsize,
                               family=family,
-                              ylim=ylim)
+                              ylim=ylim,
+                              SSq=ab$`Sum Sq`[4],
+                              DFres = ab$Df[4])
           if(quali[1]==FALSE & quali[2]==FALSE){
             graf=list(grafico,NA)}
           }
@@ -720,7 +720,9 @@ FAT2DIC=function(f1,
                               point=point,
                               textsize=textsize,
                               family=family,
-                              ylim=ylim)
+                              ylim=ylim,
+                              SSq=ab$`Sum Sq`[4],
+                              DFres = ab$Df[4])
           if(quali[1]==FALSE & quali[2]==FALSE){
             graf[[2]]=grafico
             grafico=graf}
@@ -796,7 +798,9 @@ FAT2DIC=function(f1,
                                     point=point,
                                     textsize=textsize,
                                     family=family,
-                                    ylim=ylim)
+                                    ylim=ylim,
+                                    SSq=ab$`Sum Sq`[4],
+                                    DFres = ab$Df[4])
           if(quali[1]==FALSE & quali[2]==FALSE){
             graf=list(grafico,NA)}
         }
@@ -865,7 +869,9 @@ FAT2DIC=function(f1,
                                     point=point,
                                     textsize=textsize,
                                     family=family,
-                                    ylim=ylim)
+                                    ylim=ylim,
+                                    SSq=ab$`Sum Sq`[4],
+                                    DFres = ab$Df[4])
           if(quali[1]==FALSE & quali[2]==FALSE){
             graf[[2]]=grafico
             grafico=graf}

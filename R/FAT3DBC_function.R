@@ -223,7 +223,6 @@ FAT3DBC=function(f1,
                     ad=data.frame(Fator1,Fator2,Fator3)
                     letra=SK(anava,colnames(ad[i]))
                     letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                    #letra1$resp=as.numeric(as.character(letra1$resp))
                     if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
                 if(mcomp=="duncan"){
                     ad=data.frame(Fator1,Fator2,Fator3)
@@ -317,10 +316,9 @@ FAT3DBC=function(f1,
                 print(mean.table)
                 grafico=NA}
 
-            # Regressão
             if(quali[i]==FALSE && anavaF3[i,5]<=alpha.f){
                 cat(fac.names[i])
-                dose=as.numeric(as.character(as.vector(unlist(fatores[,i]))))
+                dose=as.numeric(as.vector(unlist(fatores[,i])))
                 grafico=polynomial(dose,resp,grau = grau)
                 cat(green("To edit graphical parameters, I suggest analyzing using the \"polynomial\" command"))
                 cat(green(bold("\n------------------------------------------")))}
@@ -586,7 +584,7 @@ FAT3DBC=function(f1,
                         cat("\n----------------------\n")
                         print(sk)}}}
             if(quali[1]==FALSE){
-                Fator1a=fator1a#as.numeric(as.character(Fator1))
+                Fator1a=fator1a
                 colint1=polynomial2(Fator1a,
                                     response,
                                     Fator3,
@@ -641,7 +639,7 @@ FAT3DBC=function(f1,
                         print(sk)}}
                 }
             if(quali[2]==FALSE){
-                Fator2a=fator2a#as.numeric(as.character(Fator2))
+                Fator2a=fator2a
                 colint1=polynomial2(Fator2a,
                                     response,
                                     Fator1,
@@ -670,7 +668,7 @@ FAT3DBC=function(f1,
                             ad=data.frame(Fator1,Fator2,Fator3)
                             letra=SK(anava,colnames(ad[i]))
                             letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                            letra1$resp=as.numeric(as.character(letra1$resp))
+                            letra1$resp=as.numeric(letra1$resp)
                             if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
                         if(mcomp=="duncan"){
                             ad=data.frame(Fator1,Fator2,Fator3)
@@ -1004,7 +1002,7 @@ FAT3DBC=function(f1,
                         cat("\n----------------------\n")
                         print(sk)}}}
             if(quali[1]==FALSE){
-                Fator1a=fator1a#as.numeric(as.character(Fator3))
+                Fator1a=fator1a
                 colint2=polynomial2(Fator1a,
                                     response,
                                     Fator3,
@@ -1058,7 +1056,7 @@ FAT3DBC=function(f1,
                         cat("\n----------------------\n")
                         print(sk)}}}
             if(quali[3]==FALSE){
-                Fator3a=fator3a#as.numeric(as.character(Fator3))
+                Fator3a=fator3a
                 colint2=polynomial2(Fator3a,
                                     response,
                                     Fator1,
@@ -1088,7 +1086,7 @@ FAT3DBC=function(f1,
                             ad=data.frame(Fator1,Fator2,Fator3)
                             letra=SK(anava,colnames(ad[i]))
                             letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                            letra1$resp=as.numeric(as.character(letra1$resp))
+                            letra1$resp=as.numeric(letra1$resp)
                             if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
                         if(mcomp=="duncan"){
                             ad=data.frame(Fator1,Fator2,Fator3)
@@ -1411,7 +1409,7 @@ FAT3DBC=function(f1,
                             cat("\n----------------------\n")
                             print(sk)}}}
                 if(quali[2]==FALSE){
-                    Fator2a=fator2a#as.numeric(as.character(Fator2))
+                    Fator2a=fator2a
                     colint3=polynomial2(Fator2a,
                                         response,
                                         Fator3,
@@ -1466,7 +1464,7 @@ FAT3DBC=function(f1,
                             cat("\n----------------------\n")
                             print(sk)}}}
                 if(quali[3]==FALSE){
-                    Fator3a=fator3a#as.numeric(as.character(Fator3))
+                    Fator3a=fator3a
                     colint3=polynomial2(Fator3a,
                                         response,
                                         Fator2,
@@ -1497,7 +1495,7 @@ FAT3DBC=function(f1,
                             ad=data.frame(Fator1,Fator2,Fator3)
                             letra=SK(anava,colnames(ad[i]))
                             letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                            letra1$resp=as.numeric(as.character(letra1$resp))
+                            letra1$resp=as.numeric(letra1$resp)
                             if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
                         if(mcomp=="duncan"){
                             ad=data.frame(Fator1,Fator2,Fator3)
@@ -1609,7 +1607,6 @@ FAT3DBC=function(f1,
                     tukey=tukey$groups;colnames(tukey)=c("resp","letters")
                     if(transf !=1){tukey$respo=tapply(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
                                                              fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],mean, na.rm=TRUE)[rownames(tukey)]}
-                    # rownames(tukey)=levels(Fator1)[as.numeric(as.character(rownames(tukey)))]
                     print(tukey)}
                     if(mcomp=='duncan'){duncan=duncan(resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
                                                       fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
@@ -1619,7 +1616,6 @@ FAT3DBC=function(f1,
                     duncan=duncan$groups;colnames(duncan)=c("resp","letters")
                     if(transf !=1){duncan$respo=tapply(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
                                                               fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],mean, na.rm=TRUE)[rownames(duncan)]}
-                    # rownames(tukey)=levels(Fator1)[as.numeric(as.character(rownames(tukey)))]
                     print(duncan)}
                     if(mcomp=='lsd'){lsd=LSD(resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
                                                       fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
@@ -1629,7 +1625,6 @@ FAT3DBC=function(f1,
                     lsd=lsd$groups;colnames(lsd)=c("resp","letters")
                     if(transf !=1){lsd$respo=tapply(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
                                                            fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],mean, na.rm=TRUE)[rownames(lsd)]}
-                    # rownames(tukey)=levels(Fator1)[as.numeric(as.character(rownames(tukey)))]
                     print(lsd)}
                     if(mcomp=='sk'){
                         fat= fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]]
@@ -1649,10 +1644,6 @@ FAT3DBC=function(f1,
                     # rownames(tukey)=levels(Fator1)[as.numeric(as.character(rownames(tukey)))]
                     print(sk)}
                     }
-                # else{cat('\n\n',fac.names[1],' inside of each level of ',lf2[i],' of ',fac.names[2],' and ',lf3[j],' of ',fac.names[3])
-                #     reg.poly(resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                #              fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
-                #              an[8,1],an[8,2], nv1-1, SQ[ii])}
                 }
         }
 
@@ -1694,7 +1685,6 @@ FAT3DBC=function(f1,
                     tukey=tukey$groups;colnames(tukey)=c("resp","letters")
                     if(transf !=1){tukey$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
                                                              fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(tukey)]}
-                    # rownames(tukey)=levels(Fator2)[as.numeric(as.character(rownames(tukey)))]
                     print(tukey)}
                     if(mcomp=='duncan'){duncan=duncan(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
                                                       fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
@@ -1705,7 +1695,6 @@ FAT3DBC=function(f1,
                     if(transf !=1){duncan$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
                                                               fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(duncan)]}
 
-                    # rownames(tukey)=levels(Fator2)[as.numeric(as.character(rownames(tukey)))]
                     print(duncan)}
                     if(mcomp=='lsd'){lsd=LSD(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
                                                       fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
@@ -1715,7 +1704,6 @@ FAT3DBC=function(f1,
                     lsd=lsd$groups;colnames(lsd)=c("resp","letters")
                     if(transf !=1){lsd$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
                                                            fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(lsd)]}
-                    # rownames(tukey)=levels(Fator2)[as.numeric(as.character(rownames(tukey)))]
                     print(lsd)}
                     if(mcomp=='sk'){
                         fat=fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]]
@@ -1731,12 +1719,9 @@ FAT3DBC=function(f1,
                     rownames(sk)=unique(fat)
                     if(transf !=1){sk$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
                                                    fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(sk)]}
-                    # rownames(tukey)=levels(Fator2)[as.numeric(as.character(rownames(tukey)))]
                     print(sk)}
 
                     }
-                # else{cat('\n\n',fac.names[2],' inside of each level of ',lf1[k],' of ',fac.names[1],' and ',lf3[j],' of ',fac.names[3])
-                #     reg.poly(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]], an[8,1], an[8,2], nv2-1, SQ[ii])}
                 }
         }
 
@@ -1778,7 +1763,6 @@ FAT3DBC=function(f1,
                     if(transf !=1){tukey$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                              fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                              mean, na.rm=TRUE)[rownames(tukey)]}
-                    # rownames(tukey)=levels(Fator3)[as.numeric(as.character(rownames(tukey)))]
                     print(tukey)}
                     if(mcomp=='duncan'){duncan=duncan(resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                       fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
@@ -1789,7 +1773,6 @@ FAT3DBC=function(f1,
                     if(transf !=1){duncan$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                               fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                               mean, na.rm=TRUE)[rownames(duncan)]}
-                    # rownames(tukey)=levels(Fator3)[as.numeric(as.character(rownames(tukey)))]
                     print(duncan)}
                     if(mcomp=='lsd'){lsd=LSD(resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                       fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
@@ -1800,7 +1783,6 @@ FAT3DBC=function(f1,
                     if(transf !=1){lsd$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                            fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
                                                            mean, na.rm=TRUE)[rownames(lsd)]}
-                    # rownames(tukey)=levels(Fator3)[as.numeric(as.character(rownames(tukey)))]
                     print(lsd)}
                     if(mcomp=='sk'){
                         fat=fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]]
@@ -1820,10 +1802,6 @@ FAT3DBC=function(f1,
                     print(sk)}
 
                     }
-                # else{cat('\n\n',fac.names[3],' inside of each level of ',lf1[k],' of ',fac.names[1],' and ',lf2[i],' of ',fac.names[2])
-                #     reg.poly(resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
-                #              fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
-                #              an[8,1], an[8,2], nv3-1, SQ[ii])}
                 }
         }
 
