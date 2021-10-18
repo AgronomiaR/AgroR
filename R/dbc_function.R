@@ -224,9 +224,14 @@ DBC=function(trat,
     letra <- TUKEY(b, "trat", alpha=alpha.t)
     letra1 <- letra$groups; colnames(letra1)=c("resp","groups")}
   if(mcomp=="sk"){
-    letra=SK(b,"trat",sig.level=alpha.t)
-    letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-    letra1$resp=as.numeric(letra1$resp)}
+    nrep=table(trat)[1]
+    medias=sort(tapply(resp,trat,mean),decreasing = TRUE)
+    letra=scottknott(means = medias,
+                     df1 = a$Df[3],
+                     nrep = nrep,
+                     QME = a$`Mean Sq`[3],
+                     alpha = alpha.t)
+    letra1=data.frame(resp=medias,groups=letra)}
   if(mcomp=="duncan"){
     letra <- duncan(b, "trat", alpha=alpha.t)
     letra1 <- letra$groups; colnames(letra1)=c("resp","groups")}

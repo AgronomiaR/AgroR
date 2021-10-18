@@ -693,3 +693,68 @@ sk<-function(y,
   rownames(final)=as.character(unique(trt1))
   final
 }
+scottknott=function(means, df1, QME, nrep, alpha=0.05){
+  sk1=function(means, df1, QME, nrep, alpha=alpha) {
+    means=sort(means,decreasing=TRUE)
+    n=1:(length(means)-1)
+    n=as.list(n)
+    f=function(n){list(means[c(1:n)],means[-c(1:n)])}
+    g=lapply(n, f)
+    b1=function(x){(sum(g[[x]][[1]])^2)/length(g[[x]][[1]]) +
+        (sum(g[[x]][[2]])^2)/length(g[[x]][[2]])-
+        (sum(c(g[[x]][[1]],g[[x]][[2]]))^2)/length(c(g[[x]][[1]],g[[x]][[2]]))}
+    p=1:length(g)
+    values=sapply(p,b1)
+    minimo=min(values); maximo=max(values)
+    alfa=(1/(length(means)+df1))*(sum((means-mean(means))^2)+(df1*QME/nrep))
+    lambda=(pi/(2*(pi-2)))*(maximo/alfa)
+    vq=qchisq((alpha),lower.tail=FALSE, df=length(means)/(pi-2))
+    ll=1:length(values); da=data.frame(ll,values); da=da[order(-values),]
+    ran=da$ll[1]
+    r=g[[ran]]; r=as.list(r)
+    i=ifelse(vq>lambda|length(means)==1, 1,2)
+    means=list(means)
+    res=list(means, r)
+    return(res[[i]])
+  }
+  u=sk1(means, df1, QME, nrep, alpha=alpha)
+  u=lapply(u, sk1, df1=df1, QME=QME, nrep=nrep, alpha=alpha)
+  sk2=function(u){
+    v1=function(...){c(u[[1]])}
+    v2=function(...){c(u[[1]],u[[2]])}
+    v3=function(...){c(u[[1]],u[[2]],u[[3]])}
+    v4=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]])}
+    v5=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]])}
+    v6=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]])}
+    v7=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]])}
+    v8=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]])}
+    v9=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]],u[[9]])}
+    v10=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]],u[[9]],u[[10]])}
+    lv=list(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10)
+    l=length(u)
+    ti=lv[[l]]
+    u=ti()
+    u=lapply(u, sk1, df1=df1, QME=QME, nrep=nrep, alpha=alpha)
+    return(u)
+  }
+  u=sk2(u);u=sk2(u);u=sk2(u);u=sk2(u);u=sk2(u)
+  u=sk2(u);u=sk2(u);u=sk2(u);u=sk2(u);u=sk2(u)
+  v1=function(...){c(u[[1]])}
+  v2=function(...){c(u[[1]],u[[2]])}
+  v3=function(...){c(u[[1]],u[[2]],u[[3]])}
+  v4=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]])}
+  v5=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]])}
+  v6=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]])}
+  v7=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]])}
+  v8=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]])}
+  v9=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]],u[[9]])}
+  v10=function(...){c(u[[1]],u[[2]],u[[3]],u[[4]],u[[5]],u[[6]],u[[7]],u[[8]],u[[9]],u[[10]])}
+  lv=list(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10)
+  l=length(u)
+  ti=lv[[l]]
+  u=ti()
+  rp=u
+  l2=lapply(rp, length)
+  l2=unlist(l2)
+  rp2=rep(letters[1:length(rp)], l2)
+  return(rp2)}

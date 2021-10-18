@@ -218,9 +218,14 @@ DQL=function(trat,
 
   ## Scott-Knott
   if(mcomp=="sk"){
-    letra=SK(b,"trat",sig.level=alpha.t)
-    letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-    letra1$resp=as.numeric(letra1$resp)}
+    nrep=table(trat)[1]
+    medias=sort(tapply(resp,trat,mean),decreasing = TRUE)
+    letra=scottknott(means = medias,
+                     df1 = a$Df[4],
+                     nrep = nrep,
+                     QME = a$`Mean Sq`[4],
+                     alpha = alpha.t)
+    letra1=data.frame(resp=medias,groups=letra)}
 
   ## Duncan
     if(mcomp=="duncan"){
