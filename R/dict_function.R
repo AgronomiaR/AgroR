@@ -75,11 +75,10 @@ DICT=function(trat,
               addmean=FALSE,
               legend="Legend",
               ylim=NA,
-              width.bar=0.1,
+              width.bar=0.2,
               posi=c(0.1,0.8),
               xnumeric=FALSE,
               all.letters=FALSE){
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -206,10 +205,17 @@ for(i in 1:length(levels(time))){
   norm=shapiro.test(mod$residuals)
   homo=with(dados[dados$time==levels(dados$time)[i],], bartlett.test(mod$residuals~trat))
   indep=dwtest(mod)
-  letra=SK(mod,"trat",sig.level = alpha.t)
-  data=data.frame(sk=letters[letra$groups])
-  rownames(data)=rownames(letra$m.inf)
-  data=data[unique(as.character(trat)),]
+  nrep=with(dados[dados$time==levels(dados$time)[i],], table(trat)[1])
+  ao=anova(mod)
+  medias=sort(tapply(resp,trat,mean),decreasing = TRUE)
+  letra=scottknott(means = medias,
+                   df1 = ao$Df[2],
+                   nrep = nrep,
+                   QME = ao$`Mean Sq`[2],
+                   alpha = alpha.t)
+  letra1=data.frame(resp=medias,groups=letra)
+  letra1=letra1[unique(as.character(trat)),]
+  data=letra1$groups
   if(all.letters==FALSE){
     if(anova(mod)$`Pr(>F)`[1]>alpha.f){data=c("ns",rep(" ",length(unique(trat))-1))}}
   data=data

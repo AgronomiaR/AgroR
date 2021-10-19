@@ -102,7 +102,6 @@ PSUBDBC=function(f1,
   if(angle.label==0){hjust=0.5}else{hjust=0}
   requireNamespace("crayon")
   requireNamespace("ggplot2")
-  requireNamespace("ScottKnott")
   requireNamespace("nortest")
   fator1=f1
   fator2=f2
@@ -288,8 +287,17 @@ PSUBDBC=function(f1,
           if(transf !=1){letra1$respo=tapply(response,fat[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
 
         if(mcomp=="sk"){
-          letra1 <- sk(resp, fat[, i],num(tab[3*i,1]),
-                              num(tab[3*i,2]), alpha.t)
+          nrep=table(fat[, i])[1]
+          medias=sort(tapply(resp,fat[, i],mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = num(tab[3*i,1]),
+                        nrep = nrep,
+                        QME = num(tab[3*i,2])/num(tab[3*i,1]),
+                        alpha = alpha.t)
+          letra1=data.frame(resp=medias,groups=sk)
+
+          # letra1 <- sk(resp, fat[, i],num(tab[3*i,1]),
+          #                     num(tab[3*i,2]), alpha.t)
           colnames(letra1)=c("resp","groups")
           if(transf !=1){letra1$respo=tapply(response,fat[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         print(letra1)
@@ -521,9 +529,18 @@ PSUBDBC=function(f1,
           # trati=fatores[, 1][Fator2 == lf2[i]]
           trati=factor(trati,levels = unique(trati))
           # respi=resp[Fator2 == lf2[i]]
-          sk=sk(respi,trati,
-                       num(tab.f1f2[nv2+1,1]),
-                       num(tab.f1f2[nv2+1,2]),alpha.t)
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = num(tab.f1f2[nv2 +1, 1]),
+                        nrep = nrep,
+                        QME = num(tab.f1f2[nv2 + 1, 3]),
+                        alpha = alpha.t)
+          sk=data.frame(resp=medias,groups=sk)
+          #
+          # sk=sk(respi,trati,
+          #              num(tab.f1f2[nv2+1,1]),
+          #              num(tab.f1f2[nv2+1,2]),alpha.t)
           if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                            trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
           skgrafico[[i]]=sk[levels(trati),2]
@@ -617,9 +634,17 @@ PSUBDBC=function(f1,
           respi=resp[fat[, 1] == l1[i]]
           trati=fat[,2][fat[, 1] == l1[i]]
           trati=factor(trati,unique(trati))
-          sk=sk(respi,trati,
-                       num(tab.f2f1[nv1 +1, 1]),
-                       num(tab.f2f1[nv1 + 1, 2]),alpha.t)
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = num(tab.f2f1[nv1 +1, 1]),
+                        nrep = nrep,
+                        QME = num(tab.f2f1[nv1 + 1, 3]),
+                        alpha = alpha.t)
+          sk=data.frame(resp=medias,groups=sk)
+          # sk=sk(respi,trati,
+          #              num(tab.f2f1[nv1 +1, 1]),
+          #              num(tab.f2f1[nv1 + 1, 2]),alpha.t)
           if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                          mean, na.rm=TRUE)[rownames(sk)]}
           skgrafico1[[i]]=sk[levels(trati),2]
@@ -741,9 +766,17 @@ PSUBDBC=function(f1,
             respi=resp[fat[,2]==l2[i]]
             trati=fat[,1][fat[,2]==l2[i]]
             trati=factor(trati,levels = unique(trati))
-            sk=sk(respi,trati,
-                         num(tab.f1f2[nv2+1,1]),
-                         num(tab.f1f2[nv2+1,2]),alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = num(tab.f1f2[nv2 +1, 1]),
+                          nrep = nrep,
+                          QME = num(tab.f1f2[nv2 + 1, 3]),
+                          alpha = alpha.t)
+            sk=data.frame(resp=medias,groups=sk)
+            # sk=sk(respi,trati,
+            #              num(tab.f1f2[nv2+1,1]),
+            #              num(tab.f1f2[nv2+1,2]),alpha.t)
             if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                              trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
             cat("\n----------------------\n")
@@ -817,9 +850,18 @@ PSUBDBC=function(f1,
             respi=resp[fat[, 1] == l1[i]]
             trati=fat[,2][fat[, 1] == l1[i]]
             trati=factor(trati,unique(trati))
-            sk=sk(respi,trati,
-                         num(tab.f2f1[nv1 +1, 1]),
-                         num(tab.f2f1[nv1 + 1, 2]),alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = num(tab.f2f1[nv1 +1, 1]),
+                          nrep = nrep,
+                          QME = num(tab.f2f1[nv1 + 1, 3]),
+                          alpha = alpha.t)
+            sk=data.frame(resp=medias,groups=sk)
+            #
+            # sk=sk(respi,trati,
+            #              num(tab.f2f1[nv1 +1, 1]),
+            #              num(tab.f2f1[nv1 + 1, 2]),alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                            mean, na.rm=TRUE)[rownames(sk)]}
             cat("\n----------------------\n")
@@ -889,9 +931,17 @@ PSUBDBC=function(f1,
             # trati=fatores[, 1][Fator2 == lf2[i]]
             trati=factor(trati,levels = unique(trati))
             # respi=resp[Fator2 == lf2[i]]
-            sk=sk(respi,trati,
-                         num(tab.f1f2[nv2+1,1]),
-                         num(tab.f1f2[nv2+1,2]),alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = num(tab.f1f2[nv2 +1, 1]),
+                          nrep = nrep,
+                          QME = num(tab.f1f2[nv2 + 1, 3]),
+                          alpha = alpha.t)
+            sk=data.frame(resp=medias,groups=sk)
+            # sk=sk(respi,trati,
+            #              num(tab.f1f2[nv2+1,1]),
+            #              num(tab.f1f2[nv2+1,2]),alpha.t)
             if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                              trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
             cat("\n----------------------\n")
@@ -964,9 +1014,18 @@ PSUBDBC=function(f1,
             respi=resp[fat[, 1] == l1[i]]
             trati=fat[,2][fat[, 1] == l1[i]]
             trati=factor(trati,unique(trati))
-            sk=sk(respi,trati,
-                         num(tab.f2f1[nv1 +1, 1]),
-                         num(tab.f2f1[nv1 + 1, 2]),alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = num(tab.f2f1[nv1 +1, 1]),
+                          nrep = nrep,
+                          QME = num(tab.f2f1[nv1 + 1, 3]),
+                          alpha = alpha.t)
+            sk=data.frame(resp=medias,groups=sk)
+            #
+            # sk=sk(respi,trati,
+            #              num(tab.f2f1[nv1 +1, 1]),
+            #              num(tab.f2f1[nv1 + 1, 2]),alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                            mean, na.rm=TRUE)[rownames(sk)]}
             cat("\n----------------------\n")

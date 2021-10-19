@@ -126,6 +126,8 @@ with(cloro, FAT2DIC(f1, f2, resp, ylab="Number of nodules", legend = "Stages"))
 library(AgroR)
 data(corn)
 with(corn, FAT2DIC(A, B, Resp, quali=c(TRUE, TRUE),ylab="Heigth (cm)"))
+with(corn, FAT2DIC(A, B, Resp, mcomp="sk", quali=c(TRUE, TRUE),ylab="Heigth (cm)"))
+
 }
 \references{
 Principles and procedures of statistics a biometrical approach Steel & Torry & Dickey. Third Edition 1997

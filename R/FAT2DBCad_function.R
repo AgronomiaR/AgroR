@@ -102,7 +102,6 @@ FAT2DBC.ad=function(f1,
                     ylim=NA,
                     angle.label=0){
   if(angle.label==0){hjust=0.5}else{hjust=0}
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -294,8 +293,16 @@ FAT2DBC.ad=function(f1,
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if (mcomp == "sk"){
-          letra=sk(resp, fatores[,i], anava$Df[6],anava$`Sum Sq`[6],alpha.t)
-          letra1 <- letra; colnames(letra1)=c("resp","groups")
+          nrep=table(fatores[i])[1]
+          medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = anava$Df[5],
+                        nrep = nrep,
+                        QME = anava$`Mean Sq`[5],
+                        alpha = alpha.t)
+          letra1=data.frame(resp=medias,groups=sk)
+          # letra=sk(resp, fatores[,i], anava$Df[6],anava$`Sum Sq`[6],alpha.t)
+          # letra1 <- letra; colnames(letra1)=c("resp","groups")
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           letra <- duncan(resp, fatores[,i],anava$Df[6],anava$`Mean Sq`[6], alpha=alpha.t)
@@ -519,7 +526,15 @@ FAT2DBC.ad=function(f1,
           trati=fatores[, 1][Fator2 == lf2[i]]
           trati=factor(trati,levels = unique(trati))
           respi=resp[Fator2 == lf2[i]]
-          sk=sk(respi,trati,anava$Df[6],anava$`Sum Sq`[6],alpha.t)
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = anava$Df[6],
+                        nrep = nrep,
+                        QME = anava$`Mean Sq`[6],
+                        alpha = alpha.t)
+          sk=data.frame(respi=medias,groups=sk)
+          # sk=sk(respi,trati,anava$Df[6],anava$`Sum Sq`[6],alpha.t)
           if(transf !="1"){sk$groups$respo=tapply(respi,trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
           skgrafico[[i]]=sk[levels(trati),2]
           ordem[[i]]=rownames(sk[levels(trati),])
@@ -598,7 +613,15 @@ FAT2DBC.ad=function(f1,
           trati=fatores[, 2][Fator1 == lf1[i]]
           trati=factor(trati,levels = unique(trati))
           respi=resp[Fator1 == lf1[i]]
-          sk=sk(respi,trati,anava$Df[6],anava$`Sum Sq`[6],alpha.t)
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = anava$Df[6],
+                        nrep = nrep,
+                        QME = anava$`Mean Sq`[6],
+                        alpha = alpha.t)
+          sk=data.frame(respi=medias,groups=sk)
+          # sk=sk(respi,trati,anava$Df[6],anava$`Sum Sq`[6],alpha.t)
           if(transf !="1"){sk$respo=tapply(respi,trati,mean, na.rm=TRUE)[rownames(sk)]}
           skgrafico1[[i]]=sk[levels(trati),2]
         }

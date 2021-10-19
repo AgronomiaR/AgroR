@@ -35,7 +35,6 @@
 #' @import ggplot2
 #' @import stats
 #' @import multcompView
-#' @import ScottKnott
 #' @importFrom crayon green
 #' @importFrom crayon bold
 #' @importFrom crayon italic
@@ -154,7 +153,6 @@ DIC <- function(trat,
   if(is.na(sup==TRUE)){sup=0.1*mean(response)}
   if(angle.label==0){hjust=0.5}else{hjust=0}
   requireNamespace("nortest")
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
 

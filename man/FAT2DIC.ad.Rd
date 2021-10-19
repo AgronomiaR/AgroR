@@ -127,6 +127,7 @@ library(AgroR)
 data(cloro)
 respAd=c(268, 322, 275, 350, 320)
 with(cloro, FAT2DIC.ad(f1, f2, bloco, resp, respAd, ylab="Number of nodules", legend = "Stages"))
+
 }
 \references{
 Principles and procedures of statistics a biometrical approach Steel & Torry & Dickey. Third Edition 1997

@@ -123,7 +123,7 @@ library(AgroR)
 data(cloro)
 attach(cloro)
 FAT2DBC(f1, f2, bloco, resp, ylab="Number of nodules", legend = "Stages")
-
+FAT2DBC(f1, f2, bloco, resp, mcomp="sk", ylab="Number of nodules", legend = "Stages")
 #================================================
 # Example covercrops
 #================================================
@@ -131,6 +131,8 @@ library(AgroR)
 data(covercrops)
 attach(covercrops)
 FAT2DBC(A, B, Bloco, Resp, ylab=expression("Yield"~(Kg~"100 m"^2)),
+legend = "Cover crops")
+FAT2DBC(A, B, Bloco, Resp, mcomp="sk", ylab=expression("Yield"~(Kg~"100 m"^2)),
 legend = "Cover crops")
 }
 \references{

@@ -81,7 +81,6 @@ DQLT=function(trat,
               theme=theme_classic(),
               xnumeric=FALSE,
               all.letters=FALSE){
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -90,7 +89,7 @@ DQLT=function(trat,
   resp=response
   line=as.factor(line)
   column=as.factor(column)
-  tempo=factor(tempo,unique(tempo))
+  tempo=factor(time,unique(time))
   dados=data.frame(resp,trat,column, line, tempo)
 
   if(mcomp=="tukey"){
@@ -209,10 +208,17 @@ DQLT=function(trat,
       mod=aov(resp~trat+line+column, data=dados[dados$tempo==levels(dados$tempo)[i],])
       anovag[[i]]=anova(mod)$`Pr(>F)`[1]
       cv[[i]]=sqrt(anova(mod)$`Mean Sq`[4])/mean(mod$model$resp)*100
-      letra=SK(mod,"trat",sig.level = alpha.t)
-      data=data.frame(sk=letters[letra$groups])
-      rownames(data)=rownames(letra$m.inf)
-      data=data[unique(as.character(trat)),]
+      nrep=with(dados[dados$time==levels(dados$time)[i],], table(trat)[1])
+      ao=anova(mod)
+      medias=sort(tapply(resp,trat,mean),decreasing = TRUE)
+      letra=scottknott(means = medias,
+                       df1 = ao$Df[4],
+                       nrep = nrep,
+                       QME = ao$`Mean Sq`[4],
+                       alpha = alpha.t)
+      letra1=data.frame(resp=medias,groups=letra)
+      letra1=letra1[unique(as.character(trat)),]
+      data=letra1$groups
       if(all.letters==FALSE){
         if(anova(mod)$`Pr(>F)`[1]>alpha.f){data=c("ns",rep(" ",length(unique(trat))-1))}}
       data=data
@@ -304,18 +310,18 @@ DQLT=function(trat,
                         ymax=media+desvio),
                     width=width.bar, position = position_dodge(width=0.9))}
     if(addmean==FALSE && error==FALSE){grafico=grafico+
-      geom_text_repel(aes(y=media+sup,label=letra),size=labelsize,
+      geom_text(aes(y=media+sup,label=letra),size=labelsize,
                       position = position_dodge(width=0.9),family=family)}
     if(addmean==TRUE && error==FALSE){grafico=grafico+
-      geom_text_repel(aes(y=media+sup,
+      geom_text(aes(y=media+sup,
                           label=paste(format(media,digits = dec),
                                       letra)),size=labelsize,family=family,
                       position = position_dodge(width=0.9))}
     if(addmean==FALSE && error==TRUE){grafico=grafico+
-      geom_text_repel(aes(y=desvio+media+sup,label=letra),size=labelsize,family=family,
+      geom_text(aes(y=desvio+media+sup,label=letra),size=labelsize,family=family,
                       position = position_dodge(width=0.9))}
     if(addmean==TRUE && error==TRUE){grafico=grafico+
-      geom_text_repel(aes(y=desvio+media+sup,
+      geom_text(aes(y=desvio+media+sup,
                           label=paste(format(media,digits = dec),letra)),
                       size=labelsize,family=family,
                       position = position_dodge(width=0.9))}

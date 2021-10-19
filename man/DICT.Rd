@@ -26,7 +26,7 @@ DICT(
   addmean = FALSE,
   legend = "Legend",
   ylim = NA,
-  width.bar = 0.1,
+  width.bar = 0.2,
   posi = c(0.1, 0.8),
   xnumeric = FALSE,
   all.letters = FALSE

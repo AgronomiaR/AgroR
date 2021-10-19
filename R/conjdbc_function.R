@@ -276,12 +276,26 @@ conjdbc=function(trat,
           if(mcomp=="sk"){
             anova=anova(aov1)
             data=dados[dados$local==levels(dados$local)[i],]
-            tukey[[i]]=sk(data$resp,
-                                 data$tratamento,
-                                 anova$Df[3],
-                                 anova$`Sum Sq`[3],alpha = alpha.t)[unique(as.character(trat)),]
-            comp=sk(data$resp,data$tratamento,anova$Df[3],
-                           anova$`Sum Sq`[3],alpha = alpha.t)}
+            nrep=table(data$trat)[1]
+            medias=sort(tapply(data$resp,data$trat,mean),decreasing = TRUE)
+            letra=scottknott(means = medias,
+                             df1 = anova$Df[2],
+                             nrep = nrep,
+                             QME = anova$`Mean Sq`[2],
+                             alpha = alpha.t)
+            letra1=data.frame(resp=medias,groups=letra)[unique(as.character(trat)),]
+            tukey[[i]]=letra1
+            comp=letra1
+
+            # anova=anova(aov1)
+            # data=dados[dados$local==levels(dados$local)[i],]
+            # tukey[[i]]=sk(data$resp,
+            #                      data$tratamento,
+            #                      anova$Df[3],
+            #                      anova$`Sum Sq`[3],alpha = alpha.t)[unique(as.character(trat)),]
+            # comp=sk(data$resp,data$tratamento,anova$Df[3],
+            #                anova$`Sum Sq`[3],alpha = alpha.t)
+            }
 
           if(transf=="1"){}else{tukey[[i]]$respo=with(dados[dados$local==levels(dados$local)[i],],
                                                       tapply(response, tratamento, mean, na.rm=TRUE))[rownames(comp)]}
@@ -357,9 +371,18 @@ conjdbc=function(trat,
                                                         mean, na.rm=TRUE)[rownames(tukeyjuntos$groups)]}
         tukeyjuntos=tukeyjuntos$groups}
       if(mcomp=="sk"){
-        tukeyjuntos=sk(resp,tratamento,a$Df[1], a$`Sum Sq`[1],
-                              alpha = alpha.t)
-        colnames(tukeyjuntos)=c("resp","groups")
+        nrep=table(tratamento)[1]
+        medias=sort(tapply(resp,tratamento,mean),decreasing = TRUE)
+        letra=scottknott(means = medias,
+                         df1 = a$Df[1],
+                         nrep = nrep,
+                         QME = a$`Mean Sq`[1],
+                         alpha = alpha.t)
+        tukeyjuntos=data.frame(resp=medias,groups=letra)
+        #
+        # tukeyjuntos=sk(resp,tratamento,a$Df[1], a$`Sum Sq`[1],
+        #                       alpha = alpha.t)
+        # colnames(tukeyjuntos)=c("resp","groups")
         if(transf!="1"){tukeyjuntos$respo=tapply(response, tratamento,
                                                  mean, na.rm=TRUE)[rownames(tukeyjuntos)]}}
 

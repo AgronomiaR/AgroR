@@ -77,7 +77,8 @@
 #' library(AgroR)
 #' data(corn)
 #' with(corn, FAT2DIC(A, B, Resp, quali=c(TRUE, TRUE),ylab="Heigth (cm)"))
-
+#' with(corn, FAT2DIC(A, B, Resp, mcomp="sk", quali=c(TRUE, TRUE),ylab="Heigth (cm)"))
+#'
 FAT2DIC=function(f1,
                  f2,
                  response,
@@ -109,7 +110,6 @@ FAT2DIC=function(f1,
                  ylim=NA,
                  angle.label=0){
   if(angle.label==0){hjust=0.5}else{hjust=0}
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -272,9 +272,18 @@ FAT2DIC=function(f1,
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="sk"){
-          letra=SK(b,colnames(fatores[i]))
-          letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-          if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
+          nrep=table(fatores[i])[1]
+          medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                           df1 = a$Df[4],
+                           nrep = nrep,
+                           QME = a$`Mean Sq`[4],
+                           alpha = alpha.t)
+          letra1=data.frame(resp=medias,groups=sk)
+          # letra=SK(b,colnames(fatores[i]))
+          # letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
+          if(transf !=1){letra1$respo=tapply(response,fatores[,i],
+                                             mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           letra <- duncan(b, colnames(fatores[i]), alpha=alpha.t)
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
@@ -492,7 +501,15 @@ FAT2DIC=function(f1,
             trati=fatores[, 1][Fator2 == lf2[i]]
             trati=factor(trati,levels = unique(trati))
             respi=resp[Fator2 == lf2[i]]
-            sk=sk(respi,trati,a$Df[4], a$`Sum Sq`[4],alpha.t)
+            # sk=sk(respi,trati,a$Df[4], a$`Sum Sq`[4],alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                             df1 = a$Df[4],
+                             nrep = nrep,
+                             QME = a$`Mean Sq`[4],
+                             alpha = alpha.t)
+            sk=data.frame(respi=medias,groups=sk)
             if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                              trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
             skgrafico[[i]]=sk[levels(trati),2]
@@ -568,7 +585,15 @@ FAT2DIC=function(f1,
             trati=fatores[, 2][Fator1 == lf1[i]]
             trati=factor(trati,levels = unique(trati))
             respi=resp[Fator1 == lf1[i]]
-            sk=sk(respi,trati,a$Df[4], a$`Sum Sq`[4],alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                             df1 = a$Df[4],
+                             nrep = nrep,
+                             QME = a$`Mean Sq`[4],
+                             alpha = alpha.t)
+            sk=data.frame(respi=medias,groups=sk)
+            # sk=sk(respi,trati,a$Df[4], a$`Sum Sq`[4],alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                            mean, na.rm=TRUE)[rownames(sk)]}
             skgrafico1[[i]]=sk[levels(trati),2]
@@ -624,7 +649,15 @@ FAT2DIC=function(f1,
               trati=fatores[, 1][Fator2 == lf2[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator2 == lf2[i]]
-              sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                               df1 = a$Df[4],
+                               nrep = nrep,
+                               QME = a$`Mean Sq`[4],
+                               alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
               if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                                trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
               #mcomparasion[[i]]=sk[as.character(unique(trati)),2]
@@ -696,7 +729,15 @@ FAT2DIC=function(f1,
               trati=fatores[, 2][Fator1 == lf1[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator1 == lf1[i]]
-              sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                               df1 = a$Df[4],
+                               nrep = nrep,
+                               QME = a$`Mean Sq`[4],
+                               alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
               if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                              mean, na.rm=TRUE)[rownames(sk)]}
               #mcomparasion[[i]]=sk[as.character(unique(trati)),2]
@@ -775,7 +816,15 @@ FAT2DIC=function(f1,
               trati=fatores[, 1][Fator2 == lf2[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator2 == lf2[i]]
-              sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                               df1 = a$Df[4],
+                               nrep = nrep,
+                               QME = a$`Mean Sq`[4],
+                               alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
               if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                                trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
               #mcomparasion[[i]]=sk[as.character(unique(trati)),2]
@@ -845,7 +894,15 @@ FAT2DIC=function(f1,
               trati=fatores[, 2][Fator1 == lf1[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator1 == lf1[i]]
-              sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                               df1 = a$Df[4],
+                               nrep = nrep,
+                               QME = a$`Mean Sq`[4],
+                               alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,a$Df[5], a$`Sum Sq`[5],alpha.t)
               if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                              mean, na.rm=TRUE)[rownames(sk)]}
               #mcomparasion[[i]]=sk[as.character(unique(trati)),2]

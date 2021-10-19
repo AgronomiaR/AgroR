@@ -90,7 +90,6 @@ DQL=function(trat,
              angle.label=0)
 {if(is.na(sup==TRUE)){sup=0.2*mean(response)}
   if(angle.label==0){hjust=0.5}else{hjust=0}
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")

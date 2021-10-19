@@ -33,7 +33,6 @@ dispvar=function(data,
                  textsize=12,
                  fill="lightblue"){
   requireNamespace("ggplot2")
-  options(OutDec = ".")
 
 if(is.null(trat)==TRUE){datap=scale(data)
   datap=data.frame(datap)

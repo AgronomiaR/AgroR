@@ -161,11 +161,20 @@ PSUBSUBDBC=function(f1,
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
           print(letra1)}
         if(mcomp=="sk"){
-          letra1=sk(response,
-                       fatores[,i],
-                       GL[i],
-                       qmres[i]/GL[i],alpha.t)
-          colnames(letra1)=c("resp","groups")
+          nrep=table(fatores[, i])[1]
+          medias=sort(tapply(resp,fatores[, i],mean),decreasing = TRUE)
+          letra=scottknott(means = medias,
+                           df1 = GL[i],
+                           nrep = nrep,
+                           QME = qmres[i],
+                           alpha = alpha.t)
+          letra1=data.frame(resp=medias,groups=letra)
+          #
+          # letra1=sk(response,
+          #              fatores[,i],
+          #              GL[i],
+          #              qmres[i]/GL[i],alpha.t)
+          # colnames(letra1)=c("resp","groups")
           print(letra1)}
         }
       if(pvalor[i]>alpha.f) {
@@ -354,7 +363,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 1][Fator2 == lf2[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator2 == lf2[i]]
-        sk=sk(respi,trati,nf1f2,qmresf1f2/nf1f2,alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = nf1f2,
+                      nrep = nrep,
+                      QME = qmresf1f2,
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,nf1f2,qmresf1f2/nf1f2,alpha.t)
         skgrafico[[i]]=sk[levels(trati),2]
         ordem[[i]]=rownames(sk[levels(trati),])
       }
@@ -369,7 +386,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 2][Fator1 == lf1[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator1 == lf1[i]]
-        sk=sk(respi,trati,GL[2],qmres[2]/GL[2],alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = GL[2],
+                      nrep = nrep,
+                      QME = qmres[2],
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,GL[2],qmres[2]/GL[2],alpha.t)
         skgrafico1[[i]]=sk[levels(trati),2]
       }
       letra1=unlist(skgrafico1)
@@ -582,7 +607,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 1][Fator3 == lf3[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator3 == lf3[i]]
-        sk=sk(respi,trati,nf1f3,qmresf1f3/nf1f3,alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = nf1f3,
+                      nrep = nrep,
+                      QME = qmresf1f3,
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,nf1f3,qmresf1f3/nf1f3,alpha.t)
         skgrafico[[i]]=sk[levels(trati),2]
         ordem[[i]]=rownames(sk[levels(trati),])}
       letra=unlist(skgrafico)
@@ -596,7 +629,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 3][Fator1 == lf1[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator1 == lf1[i]]
-        sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = GL[3],
+                      nrep = nrep,
+                      QME = qmres[3],
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
         skgrafico1[[i]]=sk[levels(trati),2]}
       letra1=unlist(skgrafico1)
       letra1=toupper(letra1)}
@@ -789,7 +830,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 2][Fator3 == lf3[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator3 == lf3[i]]
-        sk=sk(respi,trati,nf2f3,qmresf2f3/nf2f3,alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = nf2f3,
+                      nrep = nrep,
+                      QME = qmresf2f3,
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,nf2f3,qmresf2f3/nf2f3,alpha.t)
         skgrafico[[i]]=sk[levels(trati),2]
         ordem[[i]]=rownames(sk[levels(trati),])}
       letra=unlist(skgrafico)
@@ -802,7 +851,15 @@ PSUBSUBDBC=function(f1,
         trati=fatores[, 3][Fator2 == lf2[i]]
         trati=factor(trati,levels = unique(trati))
         respi=response[Fator2 == lf2[i]]
-        sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = GL[3],
+                      nrep = nrep,
+                      QME = qmres[3],
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+        # sk=sk(respi,trati,GL[3],qmres[3]/GL[3],alpha.t)
         skgrafico1[[i]]=sk[levels(trati),2]}
       letra1=unlist(skgrafico1)
       letra1=toupper(letra1)}
@@ -929,11 +986,21 @@ PSUBSUBDBC=function(f1,
           duncan=duncan$groups;colnames(duncan)=c("resp","letters")
           print(duncan)}
         if(mcomp=="sk"){
-          sk=sk(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                        fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
-                        nf1f3,
-                        qmresf1f3,
-                        alpha.t);colnames(sk)=c("resp","letters")
+          respi=response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]]
+          trati=fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]]
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = nf1f3,
+                        nrep = nrep,
+                        QME = qmresf1f3,
+                        alpha = alpha.t)
+          sk=data.frame(respi=medias,groups=sk)
+          # sk=sk(response[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+          #               fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]],
+          #               nf1f3,
+          #               qmresf1f3,
+          #               alpha.t);colnames(sk)=c("resp","letters")
           print(sk)}
 
         }
@@ -1011,11 +1078,22 @@ PSUBSUBDBC=function(f1,
           duncan=duncan$groups;colnames(duncan)=c("resp","letters")
           print(duncan)}
         if(mcomp=="sk"){
-          sk=sk(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
-                        fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
-                        nf2f3,
-                        qmresf2f3/nf2f3,
-                        alpha.t);colnames(sk)=c("resp","letters")
+          respi=response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]]
+          trati=fatores[,2][Fator1==lf1[k] & Fator3==lf3[j]]
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = nf2f3,
+                        nrep = nrep,
+                        QME = qmresf2f3,
+                        alpha = alpha.t)
+          sk=data.frame(respi=medias,groups=sk)
+
+          # sk=sk(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+          #               fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
+          #               nf2f3,
+          #               qmresf2f3/nf2f3,
+          #               alpha.t);colnames(sk)=c("resp","letters")
           print(sk)}
       }
     }
@@ -1072,12 +1150,23 @@ PSUBSUBDBC=function(f1,
           duncan=duncan$groups;colnames(duncan)=c("resp","letters")
           print(duncan)}
         if(mcomp=="sk"){
-          sk=sk(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
-                        fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
-                        GL[3],
-                        qmres[3]/GL[3],
-                        alpha.t)
-          colnames(sk)=c("resp","letters")
+        respi=response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]]
+        trati=fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]]
+        nrep=table(trati)[1]
+        medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+        sk=scottknott(means = medias,
+                      df1 = nf1f3,
+                      nrep = nrep,
+                      QME = qmresf1f3,
+                      alpha = alpha.t)
+        sk=data.frame(respi=medias,groups=sk)
+          #
+          # sk=sk(response[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
+          #               fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
+          #               GL[3],
+          #               qmres[3]/GL[3],
+          #               alpha.t)
+          # colnames(sk)=c("resp","letters")
           print(sk)}
 
         }

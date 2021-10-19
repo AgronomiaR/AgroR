@@ -103,14 +103,13 @@ DBC=function(trat,
              errorbar=TRUE,
              posi="top",
              point="mean_sd",
-             angle.label=0)
-  {if(is.na(sup==TRUE)){sup=0.2*mean(response, na.rm=TRUE)}
+             angle.label=0){
+  requireNamespace("crayon")
+  requireNamespace("ggplot2")
+  requireNamespace("nortest")
+  if(is.na(sup==TRUE)){sup=0.2*mean(response, na.rm=TRUE)}
   if(angle.label==0){hjust=0.5}else{hjust=0}
   if(test=="parametric"){
-    requireNamespace("ScottKnott")
-    requireNamespace("crayon")
-    requireNamespace("ggplot2")
-    requireNamespace("nortest")
   if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
   if(transf==0){resp=log(response)}
   if(transf==0.5){resp=sqrt(response)}

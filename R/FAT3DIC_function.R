@@ -96,7 +96,6 @@ FAT3DIC=function(f1,
   fator3a=fator3
 
   fac.names=names.fat
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -202,9 +201,17 @@ FAT3DIC=function(f1,
           letra1 <- letra$groups; colnames(letra1)=c("resp","groups")
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="sk"){
-          ad=data.frame(Fator1,Fator2,Fator3)
-          letra=SK(anava,colnames(ad[i]))
-          letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
+          nrep=table(fatores[,i])[1]
+          medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = anavaF3[8,1],
+                        nrep = nrep,
+                        QME = anavaF3[8,3],
+                        alpha = alpha.t)
+          letra1=data.frame(resp=medias,groups=sk)
+          # ad=data.frame(Fator1,Fator2,Fator3)
+          # letra=SK(anava,colnames(ad[i]))
+          # letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
           if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
         if(mcomp=="duncan"){
           ad=data.frame(Fator1,Fator2,Fator3)
@@ -395,7 +402,15 @@ FAT3DIC=function(f1,
           trati=fatores[, 1][Fator2 == lf2[i]]
           trati=factor(trati,levels = unique(trati))
           respi=resp[Fator2 == lf2[i]]
-          sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+          nrep=table(trati)[1]
+          medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+          sk=scottknott(means = medias,
+                        df1 = anavaF3$Df[8],
+                        nrep = nrep,
+                        QME = anavaF3$`Mean Sq`[8],
+                        alpha = alpha.t)
+          sk=data.frame(respi=medias,groups=sk)
+          # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
           if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                                   trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
           skgrafico[[i]]=sk[levels(trati),2]
@@ -471,7 +486,15 @@ FAT3DIC=function(f1,
             trati=fatores[, 2][Fator1 == lf1[i]]
             trati=factor(trati,levels = unique(trati))
             respi=resp[Fator1 == lf1[i]]
-            sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = anavaF3$Df[8],
+                          nrep = nrep,
+                          QME = anavaF3$`Mean Sq`[8],
+                          alpha = alpha.t)
+            sk=data.frame(respi=medias,groups=sk)
+            # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                               mean, na.rm=TRUE)[rownames(sk)]}
             skgrafico1[[i]]=sk[levels(trati),2]
@@ -571,7 +594,15 @@ FAT3DIC=function(f1,
               trati=fatores[, 2][Fator1 == lf1[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator1 == lf1[i]]
-              sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
               if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,
                                                 mean, na.rm=TRUE)[rownames(sk)]}
               cat("\n----------------------\n")
@@ -634,7 +665,15 @@ FAT3DIC=function(f1,
               trati=fatores[, 1][Fator2 == lf2[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator2 == lf2[i]]
-              sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
               if(transf !="1"){sk$respo=tapply(response[Fator2 == lf2[i]],
                                                       trati,mean, na.rm=TRUE)[rownames(sk$groups)]}
               cat("\n----------------------\n")
@@ -667,9 +706,17 @@ FAT3DIC=function(f1,
             if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
             if(mcomp=="sk"){
               ad=data.frame(Fator1,Fator2,Fator3)
-              letra=SK(anava,colnames(ad[i]))
-              letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-              letra1$resp=as.numeric(as.character(letra1$resp))
+              nrep=table(fatores[,i])[1]
+              medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3[8,1],
+                            nrep = nrep,
+                            QME = anavaF3[8,3],
+                            alpha = alpha.t)
+              letra1=data.frame(resp=medias,groups=sk)
+              # letra=SK(anava,colnames(ad[i]))
+              # letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
+              # letra1$resp=as.numeric(as.character(letra1$resp))
               if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
             if(mcomp=="duncan"){
               ad=data.frame(Fator1,Fator2,Fator3)
@@ -816,7 +863,15 @@ FAT3DIC=function(f1,
             trati=fatores[, 1][Fator3 == lf3[i]]
             trati=factor(trati,levels = unique(trati))
             respi=resp[Fator3 == lf3[i]]
-            sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = anavaF3$Df[8],
+                          nrep = nrep,
+                          QME = anavaF3$`Mean Sq`[8],
+                          alpha = alpha.t)
+            sk=data.frame(respi=medias,groups=sk)
+            # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator3 == lf3[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
             skgrafico[[i]]=sk[levels(trati),2]
             ordem[[i]]=rownames(sk[levels(trati),])
@@ -888,7 +943,15 @@ FAT3DIC=function(f1,
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator1 == lf1[i]]
               mod=aov(respi~trati)
-              sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
               if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
               skgrafico1[[i]]=sk[levels(trati),2]
               }
@@ -970,7 +1033,6 @@ FAT3DIC=function(f1,
                 trati=fatores[, 3][Fator1 == lf1[i]]
                 trati=factor(trati,levels = unique(trati))
                 respi=resp[Fator1 == lf1[i]]
-                mod=aov(respi~trati)
                 lsd=LSD(respi,trati,anavaF3$Df[8],anavaF3$`Mean Sq`[8],alpha.t)
                 if(transf !=1){lsd$groups$respo=tapply(response[Fator1 == lf1[i]],trati,mean, na.rm=TRUE)[rownames(lsd$groups)]}
                 cat("\n----------------------\n")
@@ -982,8 +1044,16 @@ FAT3DIC=function(f1,
                 trati=fatores[, 3][Fator1 == lf1[i]]
                 trati=factor(trati,levels = unique(trati))
                 respi=resp[Fator1 == lf1[i]]
-                mod=aov(respi~trati)
-                sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+                nrep=table(trati)[1]
+                medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3$Df[8],
+                              nrep = nrep,
+                              QME = anavaF3$`Mean Sq`[8],
+                              alpha = alpha.t)
+                sk=data.frame(respi=medias,groups=sk)
+                # mod=aov(respi~trati)
+                # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
                 if(transf !=1){sk$respo=tapply(response[Fator1 == lf1[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
                 cat("\n----------------------\n")
                 cat("Multiple comparison of F3 within level",lf1[i],"of F1")
@@ -1041,7 +1111,15 @@ FAT3DIC=function(f1,
                 trati=fatores[, 1][Fator3 == lf3[i]]
                 trati=factor(trati,levels = unique(trati))
                 respi=resp[Fator3 == lf3[i]]
-                sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+                nrep=table(trati)[1]
+                medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3$Df[8],
+                              nrep = nrep,
+                              QME = anavaF3$`Mean Sq`[8],
+                              alpha = alpha.t)
+                sk=data.frame(respi=medias,groups=sk)
+                # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
                 if(transf !=1){sk$respo=tapply(response[Fator3 == lf3[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
                 cat("\n----------------------\n")
                 cat("Multiple comparison of F1 within level",lf3[i],"of F3")
@@ -1075,9 +1153,17 @@ FAT3DIC=function(f1,
               if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
               if(mcomp=="sk"){
                 ad=data.frame(Fator1,Fator2,Fator3)
-                letra=SK(anava,colnames(ad[i]))
-                letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                letra1$resp=as.numeric(as.character(letra1$resp))
+                nrep=table(fatores[,i])[1]
+                medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3[8,1],
+                              nrep = nrep,
+                              QME = anavaF3[8,3],
+                              alpha = alpha.t)
+                letra1=data.frame(resp=medias,groups=sk)
+                # letra=SK(anava,colnames(ad[i]))
+                # letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
+                # letra1$resp=as.numeric(as.character(letra1$resp))
                 if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
               if(mcomp=="duncan"){
                 ad=data.frame(Fator1,Fator2,Fator3)
@@ -1225,7 +1311,15 @@ FAT3DIC=function(f1,
             trati=fatores[, 2][Fator3 == lf3[i]]
             trati=factor(trati,levels = unique(trati))
             respi=resp[Fator3 == lf3[i]]
-            sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+            nrep=table(trati)[1]
+            medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+            sk=scottknott(means = medias,
+                          df1 = anavaF3$Df[8],
+                          nrep = nrep,
+                          QME = anavaF3$`Mean Sq`[8],
+                          alpha = alpha.t)
+            sk=data.frame(respi=medias,groups=sk)
+            # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
             if(transf !=1){sk$respo=tapply(response[Fator3 == lf3[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
             skgrafico[[i]]=sk[levels(trati),2]
             ordem[[i]]=rownames(sk[levels(trati),])
@@ -1297,7 +1391,15 @@ FAT3DIC=function(f1,
               trati=fatores[, 3][Fator2 == lf2[i]]
               trati=factor(trati,levels = unique(trati))
               respi=resp[Fator2 == lf2[i]]
-              sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+              nrep=table(trati)[1]
+              medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
               if(transf !=1){sk$respo=tapply(response[Fator2 == lf2[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
               skgrafico1[[i]]=sk[levels(trati),2]
               }
@@ -1390,7 +1492,15 @@ FAT3DIC=function(f1,
                 trati=fatores[, 3][Fator2 == lf2[i]]
                 trati=factor(trati,levels = unique(trati))
                 respi=resp[Fator2 == lf2[i]]
-                sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+                nrep=table(trati)[1]
+                medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3$Df[8],
+                              nrep = nrep,
+                              QME = anavaF3$`Mean Sq`[8],
+                              alpha = alpha.t)
+                sk=data.frame(respi=medias,groups=sk)
+                # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
                 if(transf !=1){sk$respo=tapply(response[Fator2 == lf2[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
                 cat("\n----------------------\n")
                 cat("Multiple comparison of F3 within level",lf2[i],"of F2")
@@ -1446,7 +1556,15 @@ FAT3DIC=function(f1,
                 trati=fatores[, 2][Fator3 == lf3[i]]
                 trati=factor(trati,levels = unique(trati))
                 respi=resp[Fator3 == lf3[i]]
-                sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
+                nrep=table(trati)[1]
+                medias=sort(tapply(respi,trati,mean),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3$Df[8],
+                              nrep = nrep,
+                              QME = anavaF3$`Mean Sq`[8],
+                              alpha = alpha.t)
+                sk=data.frame(respi=medias,groups=sk)
+                # sk=sk(respi,trati,anavaF3$Df[8],anavaF3$`Sum Sq`[8],alpha.t)
                 if(transf !=1){sk$respo=tapply(response[Fator3 == lf3[i]],trati,mean, na.rm=TRUE)[rownames(sk)]}
                 cat("\n----------------------\n")
                 cat("Multiple comparison of F2 within level",lf3[i],"of F3")
@@ -1478,9 +1596,17 @@ FAT3DIC=function(f1,
               if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
               if(mcomp=="sk"){
                 ad=data.frame(Fator1,Fator2,Fator3)
-                letra=SK(anava,colnames(ad[i]))
-                letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
-                letra1$resp=as.numeric(as.character(letra1$resp))
+                nrep=table(fatores[,i])[1]
+                medias=sort(tapply(resp,fatores[i],mean, na.rm=TRUE),decreasing = TRUE)
+                sk=scottknott(means = medias,
+                              df1 = anavaF3[8,1],
+                              nrep = nrep,
+                              QME = anavaF3[8,3],
+                              alpha = alpha.t)
+                letra1=data.frame(resp=medias,groups=sk)
+                # letra=SK(anava,colnames(ad[i]))
+                # letra1=data.frame(resp=letra$m.inf[,1],groups=letters[letra$groups])
+                # letra1$resp=as.numeric(as.character(letra1$resp))
                 if(transf !=1){letra1$respo=tapply(response,fatores[,i],mean, na.rm=TRUE)[rownames(letra1)]}}
               if(mcomp=="duncan"){
                 ad=data.frame(Fator1,Fator2,Fator3)
@@ -1609,12 +1735,20 @@ FAT3DIC=function(f1,
               fat= fatores[,1][Fator2==lf2[i] & Fator3==lf3[j]]
               fat1=factor(fat,unique(fat))
               levels(fat1)=1:length(levels(fat1))
-
-              sk=sk(resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
-                           fat1,
-                           anavaF3$Df[8],
-                           anavaF3$`Sum Sq`[8],
-                           alpha.t)
+              respi=resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]]
+              nrep=table(fat1)[1]
+              medias=sort(tapply(respi,fat1,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(resp[fatores[,2]==lf2[i] & fatores[,3]==lf3[j]],
+              #              fat1,
+              #              anavaF3$Df[8],
+              #              anavaF3$`Sum Sq`[8],
+              #              alpha.t)
             colnames(sk)=c("resp","letters")
             sk=sk[as.character(unique(fat1)),]
             rownames(sk)=unique(fat)
@@ -1682,11 +1816,22 @@ FAT3DIC=function(f1,
               fat=fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]]
               fat1=factor(fat,unique(fat))
               levels(fat1)=1:length(levels(fat1))
-              sk=sk(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
-                          fat1,
-                          anavaF3$Df[8],
-                          anavaF3$`Sum Sq`[8],
-                          alpha.t)
+
+              respi=resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]]
+              nrep=table(fat1)[1]
+              medias=sort(tapply(respi,fat1,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+
+              # sk=sk(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+              #             fat1,
+              #             anavaF3$Df[8],
+              #             anavaF3$`Sum Sq`[8],
+              #             alpha.t)
             colnames(sk)=c("resp","letters")
             sk=sk[as.character(unique(fat1)),]
             rownames(sk)=unique(fat)
@@ -1760,11 +1905,20 @@ FAT3DIC=function(f1,
               fat=fatores[,3][fatores[,1]==lf1[k] & fatores[,2]==lf2[i]]
               fat1=factor(fat,unique(fat))
               levels(fat1)=1:length(levels(fat1))
-              sk=sk(resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
-                          fat1,
-                          anavaF3$Df[8],
-                          anavaF3$`Sum Sq`[8],
-                          alpha.t)
+              respi=resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]]
+              nrep=table(fat1)[1]
+              medias=sort(tapply(respi,fat1,mean),decreasing = TRUE)
+              sk=scottknott(means = medias,
+                            df1 = anavaF3$Df[8],
+                            nrep = nrep,
+                            QME = anavaF3$`Mean Sq`[8],
+                            alpha = alpha.t)
+              sk=data.frame(respi=medias,groups=sk)
+              # sk=sk(resp[fatores[,1]==lf1[k] & fatores[,2]==lf2[i]],
+              #             fat1,
+              #             anavaF3$Df[8],
+              #             anavaF3$`Sum Sq`[8],
+              #             alpha.t)
             colnames(sk)=c("resp","letters")
             sk=sk[as.character(unique(fat1)),]
             rownames(sk)=unique(fat)

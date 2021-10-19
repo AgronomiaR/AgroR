@@ -88,7 +88,6 @@ DBCT=function(trat,
               dec=3,
               xnumeric=FALSE,
               all.letters=FALSE){
-  requireNamespace("ScottKnott")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
   requireNamespace("nortest")
@@ -212,10 +211,17 @@ DBCT=function(trat,
       mod=aov(resp~trat+block, data=dados[dados$time==levels(dados$time)[i],])
       anovag[[i]]=anova(mod)$`Pr(>F)`[1]
       cv[[i]]=sqrt(anova(mod)$`Mean Sq`[3])/mean(mod$model$resp)*100
-      letra=SK(mod,"trat",sig.level = alpha.t)
-      data=data.frame(sk=letters[letra$groups])
-      rownames(data)=rownames(letra$m.inf)
-      data=data[unique(as.character(trat)),]
+      nrep=with(dados[dados$time==levels(dados$time)[i],], table(trat)[1])
+      ao=anova(mod)
+      medias=sort(tapply(resp,trat,mean),decreasing = TRUE)
+      letra=scottknott(means = medias,
+                       df1 = ao$Df[3],
+                       nrep = nrep,
+                       QME = ao$`Mean Sq`[3],
+                       alpha = alpha.t)
+      letra1=data.frame(resp=medias,groups=letra)
+      letra1=letra1[unique(as.character(trat)),]
+      data=letra1$groups
       if(all.letters==FALSE){
       if(anova(mod)$`Pr(>F)`[1]>alpha.f){data=c("ns",rep(" ",length(unique(trat))-1))}}
       scott[[i]]=as.character(data)
