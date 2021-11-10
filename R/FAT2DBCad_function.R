@@ -16,6 +16,7 @@
 #' @param alpha.t Significance level of the multiple comparison test (\emph{default} is 0.05)
 #' @param grau Degree of polynomial in case of quantitative factor (\emph{default} is 1)
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param geom Graph type (columns or segments (For simple effect only))
 #' @param theme ggplot2 theme (\emph{default} is theme_classic())
 #' @param ylab Variable response name (Accepts the \emph{expression}() function)
@@ -44,7 +45,6 @@
 #' @keywords DBC
 #' @keywords Factorial
 #' @keywords Aditional
-#' @seealso \link{FAT2DBC.art}
 #' @seealso \link{FAT2DBC}
 #' @seealso \link{dunnett}
 #' @references
@@ -75,12 +75,13 @@ FAT2DBC.ad=function(f1,
                     responseAd,
                     norm="sw",
                     homog="bt",
-                    mcomp="tukey",
                     alpha.f=0.05,
                     alpha.t=0.05,
                     quali=c(TRUE,TRUE),
+                    mcomp="tukey",
                     grau=NA,
                     transf=1,
+                    constant=0,
                     geom="bar",
                     theme=theme_classic(),
                     ylab="Response",
@@ -113,16 +114,16 @@ FAT2DBC.ad=function(f1,
   # ================================
   # Transformacao de dados
   # ================================
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
-  if(transf==1){respAd=responseAd}else{respAd=(responseAd^transf-1)/transf}
-  if(transf==0){respAd=log(responseAd)}
-  if(transf==0.5){respAd=sqrt(responseAd)}
-  if(transf==-0.5){respAd=1/sqrt(responseAd)}
-  if(transf==-1){respAd=1/responseAd}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
+  if(transf==1){respAd=responseAd+constant}else{respAd=((responseAd+constant)^transf-1)/transf}
+  if(transf==0){respAd=log(responseAd+constant)}
+  if(transf==0.5){respAd=sqrt(responseAd+constant)}
+  if(transf==-0.5){respAd=1/sqrt(responseAd+constant)}
+  if(transf==-1){respAd=1/(responseAd+constant)}
 
   if(is.na(sup==TRUE)){sup=0.1*mean(response)}
   Fator1=factor(fator1, levels = unique(fator1))

@@ -14,6 +14,7 @@
 #' @param alpha.f Level of significance of the F test (\emph{default} is 0.05)
 #' @param alpha.t Significance level of the multiple comparison test (\emph{default} is 0.05)
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param grau Degree of polynomial in case of quantitative factor (\emph{default} is 1)
 #' @param geom Graph type (columns or segments (For simple effect only))
 #' @param theme ggplot2 theme (\emph{default} is theme_classic())
@@ -47,7 +48,7 @@
 #' @importFrom crayon red
 #' @importFrom crayon blue
 #' @import stats
-#' @seealso \link{FAT2DBC.ad}, \link{FAT2DBC.art}
+#' @seealso \link{FAT2DBC.ad}
 #' @references
 #'
 #' Principles and procedures of statistics a biometrical approach Steel, Torry and Dickey. Third Edition 1997
@@ -62,7 +63,6 @@
 #'
 #' Mendiburu, F., and de Mendiburu, M. F. (2019). Package ‘agricolae’. R Package, Version, 1-2.
 #'
-#' @seealso \link{FAT2DBC.art}
 #' @export
 #' @examples
 #'
@@ -88,33 +88,34 @@
 FAT2DBC=function(f1,
                  f2,
                  block,
-                  response,
-                  transf=1,
-                  norm="sw",
-                  homog="bt",
-                  mcomp = "tukey",
-                  alpha.f=0.05,
-                  alpha.t=0.05,
-                  quali=c(TRUE,TRUE),
-                  grau=NA,
-                  geom="bar",
-                  theme=theme_classic(),
-                  ylab="Response",
-                  xlab="",
-                  legend="Legend",
-                  fill="lightblue",
-                  angle=0,
-                  textsize=12,
-                  dec=3,
-                  family="sans",
-                  point="mean_sd",
-                  addmean=TRUE,
-                  errorbar=TRUE,
-                  CV=TRUE,
-                  sup=NA,
-                  color="rainbow",
-                  posi="right",
-                  ylim=NA,
+                 response,
+                 norm = "sw",
+                 homog = "bt",
+                 alpha.f = 0.05,
+                 alpha.t = 0.05,
+                 quali = c(TRUE, TRUE),
+                 mcomp = "tukey",
+                 grau = NA,
+                 transf = 1,
+                 constant = 0,
+                 geom = "bar",
+                 theme = theme_classic(),
+                 ylab = "Response",
+                 xlab = "",
+                 legend = "Legend",
+                 fill = "lightblue",
+                 angle = 0,
+                 textsize = 12,
+                 dec = 3,
+                 family = "sans",
+                 point = "mean_sd",
+                 addmean = TRUE,
+                 errorbar = TRUE,
+                 CV = TRUE,
+                 sup = NA,
+                 color = "rainbow",
+                 posi = "right",
+                 ylim = NA,
                  angle.label=0){
   if(angle.label==0){hjust=0.5}else{hjust=0}
   requireNamespace("crayon")
@@ -135,11 +136,11 @@ FAT2DBC=function(f1,
   lf2 <- levels(Fator2)
   fac.names = c("F1", "F2")
   fatores <- data.frame(Fator1, Fator2)
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   graph=data.frame(Fator1,Fator2,resp)
   a=anova(aov(resp~Fator1*Fator2+bloco))
   ab=anova(aov(response~Fator1*Fator2+bloco))
@@ -244,7 +245,7 @@ FAT2DBC=function(f1,
   if(transf==1 && norm1$p.value<0.05 | transf==1 && indep$p.value<0.05 | transf==1 &&homog1$p.value<0.05){
     message("\n Your analysis is not valid, suggests using a non-parametric test and try to transform the data\n")}else{}
   if(transf != 1 && norm1$p.value<0.05 | transf!=1 && indep$p.value<0.05 | transf!=1 && homog1$p.value<0.05){
-    message("\n Your analysis is not valid, suggests using a FAT2DBC.art\n")}else{}
+    message("\n Your analysis is not valid\n")}else{}
 
   if (a$`Pr(>F)`[4] > alpha.f){
     cat(green(bold("-----------------------------------------------------------------\n")))
@@ -353,7 +354,7 @@ FAT2DBC=function(f1,
               axis.text = element_text(size=textsize,color="black",family=family),
               axis.title = element_text(size=textsize,color="black",family=family),
               legend.position = "none")}
-      if(CV==TRUE){grafico=grafico+labs(caption=paste("p-value = ", if(a$`Pr(>F)`[i]<0.0001){paste("<", 0.0001)}
+      if(CV==TRUE){grafico=grafico+labs(caption=paste("p-value ", if(a$`Pr(>F)`[i]<0.0001){paste("<", 0.0001)}
                                                       else{paste("=", round(a$`Pr(>F)`[i],4))},"; CV = ",
                                                       round(abs(sqrt(a$`Mean Sq`[5])/mean(resp))*100,2),"%"))}
       grafico=grafico

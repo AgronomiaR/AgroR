@@ -3,7 +3,7 @@
 \docType{data}
 \name{pepper}
 \alias{pepper}
-\title{Dataset: pepper}
+\title{Dataset: Pepper}
 \format{
 data.frame containing data set
   \describe{

@@ -41,9 +41,9 @@ plot_cor=function(x,y,
     if(method=="spearman"){title="Spearman correlation"}
   }
   if(method=="pearson"){corre=cor(y,x)
-  pvalor=Hmisc::rcorr(y,x)$P[1,2]}
+  pvalor=cor.test(y,x,method="pearson",exact=FALSE)$p.value}
   if(method=="spearman"){corre=cor(y,x,method = "spearman")
-  pvalor=Hmisc::rcorr(y,x,type = "spearman")$P[1,2]}
+  pvalor=cor.test(y,x,method="spearman",exact=FALSE)$p.value}
   requireNamespace("ggplot2")
   data=data.frame(y,x)
   ggplot(data,aes(y=y,x=x))+

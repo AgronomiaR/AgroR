@@ -14,6 +14,7 @@
 #' @param alpha.t Significance level of the multiple comparison test (\emph{default} is 0.05)
 #' @param grau Degree of polynomial in case of quantitative factor (\emph{default} is 1)
 #' @param transf Applies data transformation (\emph{default} is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param test "parametric" - Parametric test or "noparametric" - non-parametric test
 #' @param p.adj Method for adjusting p values for Kruskal-Wallis ("none","holm","hommel", "hochberg", "bonferroni", "BH", "BY", "fdr")
 #' @param geom Graph type (columns, boxes or segments)
@@ -23,6 +24,7 @@
 #' @param ylab Variable response name (Accepts the \emph{expression}() function)
 #' @param xlab Treatments name (Accepts the \emph{expression}() function)
 #' @param textsize Font size
+#' @param labelsize Label size
 #' @param fill Defines chart color (to generate different colors for different treatments, define fill = "trat")
 #' @param angle x-axis scale text rotation
 #' @param family Font family
@@ -30,7 +32,7 @@
 #' @param addmean Plot the average value on the graph (\emph{default} is TRUE)
 #' @param errorbar Plot the standard deviation bar on the graph (In the case of a segment and column graph) - \emph{default} is TRUE
 #' @param posi Legend position
-#' @param point Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). Only for quali=F.
+#' @param point Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). For quali=FALSE or quali=TRUE.
 #' @param angle.label label angle
 #' @import ggplot2
 #' @import stats
@@ -53,16 +55,12 @@
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom emmeans emmeans
 #' @importFrom multcomp cld
-#' @importFrom ARTool artlm
-#' @importFrom ARTool art
 #' @importFrom lme4 lmer
 #' @importFrom graphics par
 #' @importFrom utils read.table
-#' @importFrom stringr str_trim
-#' @importFrom reshape2 melt
-#' @importFrom Hmisc rcorr
 #' @importFrom cowplot plot_grid
 #' @importFrom lmtest dwtest
+#' @importFrom stats cor.test
 #' @note The ordering of the graph is according to the sequence in which the factor levels are arranged in the data sheet. The bars of the column and segment graphs are standard deviation.
 #' @note Post hoc test in nonparametric is using the criterium Fisher's least significant difference (p-adj="holm").
 #' @note CV and p-value of the graph indicate coefficient of variation and p-value of the F test of the analysis of variance.
@@ -81,7 +79,7 @@
 #'
 #' Mendiburu, F., and de Mendiburu, M. F. (2019). Package ‘agricolae’. R Package, Version, 1-2.
 #'
-#' HOTHORN, Torsten et al. Package ‘lmtest’. Testing linear regression models. https://cran. r-project. org/web/packages/lmtest/lmtest. pdf. Accessed, v. 6, 2015.
+#' Hothorn, T. et al. Package ‘lmtest’. Testing linear regression models. https://cran. r-project. org/web/packages/lmtest/lmtest. pdf. Accessed, v. 6, 2015.
 #'
 #' @return The table of analysis of variance, the test of normality of errors (Shapiro-Wilk, Lilliefors, Anderson-Darling, Cramer-von Mises, Pearson and Shapiro-Francia), the test of homogeneity of variances (Bartlett or Levene), the test of independence of Durbin-Watson errors, the test of multiple comparisons (Tukey, LSD, Scott-Knott or Duncan) or adjustment of regression models up to grade 3 polynomial, in the case of quantitative treatments. Non-parametric analysis can be used by the Kruskal-Wallis test. The column, segment or box chart for qualitative treatments is also returned. The function also returns a standardized residual plot.
 #' @keywords DIC
@@ -126,24 +124,26 @@ DIC <- function(trat,
                 response,
                 norm="sw",
                 homog="bt",
-                mcomp="tukey",
-                quali=TRUE,
                 alpha.f=0.05,
                 alpha.t=0.05,
+                quali=TRUE,
+                mcomp="tukey",
                 grau=1,
                 transf=1,
+                constant=0,
                 test="parametric",
                 p.adj="holm",
                 geom="bar",
                 theme=theme_classic(),
+                ylab="Response",
                 sup=NA,
                 CV=TRUE,
-                ylab="Response",
                 xlab="",
                 fill="lightblue",
                 angle=0,
                 family="sans",
                 textsize=12,
+                labelsize=5,
                 dec=3,
                 addmean=TRUE,
                 errorbar=TRUE,
@@ -157,11 +157,11 @@ DIC <- function(trat,
   requireNamespace("ggplot2")
 
   if(test=="parametric"){
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   trat1=trat
   trat=as.factor(trat)
   a = anova(aov(resp ~ trat))
@@ -318,9 +318,9 @@ DIC <- function(trat,
       geom_col(aes(fill=trats),fill=fill,color=1)}
   if(errorbar==TRUE){grafico=grafico+
     geom_text(aes(y=media+sup+if(sup<0){-desvio}else{desvio},
-                  label=letra),family=family,angle=angle.label, hjust=hjust)}
+                  label=letra),family=family,angle=angle.label,size=labelsize, hjust=hjust)}
   if(errorbar==FALSE){grafico=grafico+
-    geom_text(aes(y=media+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+    geom_text(aes(y=media+sup,label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
   if(errorbar==TRUE){grafico=grafico+
     geom_errorbar(data=dadosm,aes(ymin=media-desvio,
                                   ymax=media+desvio,color=1),
@@ -329,10 +329,10 @@ DIC <- function(trat,
                                               y=media))
   if(errorbar==TRUE){grafico=grafico+
     geom_text(aes(y=media+sup+if(sup<0){-desvio}else{desvio},
-                  label=letra),family=family,angle=angle.label, hjust=hjust)}
+                  label=letra),family=family,angle=angle.label,size=labelsize, hjust=hjust)}
   if(errorbar==FALSE){grafico=grafico+
     geom_text(aes(y=media+sup,
-                  label=letra),family=family,angle=angle.label, hjust=hjust)}
+                  label=letra),family=family,angle=angle.label, size=labelsize,hjust=hjust)}
   if(errorbar==TRUE){grafico=grafico+
     geom_errorbar(data=dadosm,
                   aes(ymin=media-desvio,
@@ -368,7 +368,7 @@ DIC <- function(trat,
     geom_text(data=dadosm2,
               aes(y=superior,
                   label=letra),
-              family = family,angle=angle.label, hjust=hjust)}
+              family = family,size=labelsize,angle=angle.label, hjust=hjust)}
   grafico=grafico+
     theme+
     ylab(ylab)+
@@ -380,7 +380,7 @@ DIC <- function(trat,
   if(angle !=0){grafico=grafico+
     theme(axis.text.x=element_text(hjust = 1.01,angle = angle))}
   if(CV==TRUE){grafico=grafico+
-    labs(caption=paste("p-value = ", if(a$`Pr(>F)`[1]<0.0001){paste("<", 0.0001)}
+    labs(caption=paste("p-value", if(a$`Pr(>F)`[1]<0.0001){paste("<", 0.0001)}
                                                   else{paste("=", round(a$`Pr(>F)`[1],4))},"; CV = ",
                                                   round(abs(sqrt(a$`Mean Sq`[2])/mean(resp))*100,2),"%"))}
   grafico=as.list(grafico)
@@ -584,9 +584,9 @@ DIC <- function(trat,
         geom_col(aes(fill=trats),fill=fill,color=1)}
     if(errorbar==TRUE){grafico=grafico+
       geom_text(aes(y=media+sup+if(sup<0){-std}else{std},
-                    label=letra),family=family,angle=angle.label, hjust=hjust)}
+                    label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
     if(errorbar==FALSE){grafico=grafico+
-      geom_text(aes(y=media+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+      geom_text(aes(y=media+sup,label=letra),size=labelsize,family=family,angle=angle.label, hjust=hjust)}
     if(errorbar==TRUE){grafico=grafico+
       geom_errorbar(data=dadosm,aes(ymin=response-std,
                                     ymax=response+std,
@@ -598,11 +598,11 @@ DIC <- function(trat,
     if(errorbar==TRUE){grafico=grafico+
       geom_text(aes(y=media+sup+if(sup<0){-std}else{std},
                     label=letra),
-                family=family,angle=angle.label, hjust=hjust)}
+                family=family,angle=angle.label,size=labelsize, hjust=hjust)}
     if(errorbar==FALSE){grafico=grafico+
       geom_text(aes(y=media+sup,
                     label=letra),
-                family=family,angle=angle.label, hjust=hjust)}
+                family=family,angle=angle.label, size=labelsize,hjust=hjust)}
     if(errorbar==TRUE){grafico=grafico+
       geom_errorbar(data=dadosm,
                     aes(ymin=response-std,
@@ -641,7 +641,7 @@ DIC <- function(trat,
       geom_text(data=dadosm2,
                 aes(y=superior,
                     label=letra),
-                family = family,angle=angle.label, hjust=hjust)}
+                family = family,angle=angle.label, size=labelsize,hjust=hjust)}
     grafico=grafico+theme+
       ylab(ylab)+
       xlab(xlab)+

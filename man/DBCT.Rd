@@ -11,12 +11,12 @@ DBCT(
   response,
   alpha.f = 0.05,
   alpha.t = 0.05,
-  theme = theme_classic(),
+  mcomp = "tukey",
   geom = "bar",
+  theme = theme_classic(),
   fill = "gray",
   ylab = "Response",
   xlab = "Independent",
-  mcomp = "tukey",
   textsize = 12,
   labelsize = 5,
   error = TRUE,
@@ -26,7 +26,8 @@ DBCT(
   posi = c(0.1, 0.8),
   legend = "Legend",
   ylim = NA,
-  width.bar = 0.1,
+  width.bar = 0.2,
+  size.bar = 0.8,
   dec = 3,
   xnumeric = FALSE,
   all.letters = FALSE
@@ -45,9 +46,11 @@ DBCT(
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
 
-\item{theme}{ggplot2 theme (\emph{default} is theme_classic())}
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD ("lsd"), Scott-Knott ("sk"), Duncan ("duncan") and Friedman ("fd"))}
 
 \item{geom}{Graph type (columns - "bar" or segments "point")}
+
+\item{theme}{ggplot2 theme (\emph{default} is theme_classic())}
 
 \item{fill}{Defines chart color (to generate different colors for different treatments, define fill = "trat")}
 
@@ -55,13 +58,11 @@ DBCT(
 
 \item{xlab}{Treatments name (Accepts the \emph{expression}() function)}
 
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD ("lsd"), Scott-Knott ("sk"), Duncan ("duncan") and Friedman ("fd"))}
-
 \item{textsize}{Font size of the texts and titles of the axes}
 
 \item{labelsize}{Font size of the labels}
 
-\item{error}{Add error bar}
+\item{error}{Add error bar (SD)}
 
 \item{family}{Font family}
 
@@ -75,7 +76,9 @@ DBCT(
 
 \item{ylim}{y-axis scale}
 
-\item{width.bar}{width errorbar}
+\item{width.bar}{width error bar}
+
+\item{size.bar}{size error bar}
 
 \item{dec}{Number of cells}
 

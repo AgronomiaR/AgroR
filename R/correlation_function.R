@@ -23,15 +23,29 @@ corgraph=function(data,
                      method="pearson"){
   dm=data
   requireNamespace("ggplot2")
-  requireNamespace("Hmisc")
-  requireNamespace("reshape2")
+  pearson=function(data,method="pearson"){
+    corre=cor(data,method=method)
+    col_combinations = expand.grid(names(data), names(data))
+    cor_test_wrapper = function(col_name1, col_name2, data_frame) {
+      cor.test(data_frame[[col_name1]], data_frame[[col_name2]],method=method,exact=FALSE)$p.value}
+    p_vals = mapply(cor_test_wrapper,
+                    col_name1 = col_combinations[[1]],
+                    col_name2 = col_combinations[[2]],
+                    MoreArgs = list(data_frame = data))
+    pvalue=matrix(p_vals, ncol(data), ncol(data), dimnames = list(names(data), names(data)))
+    list(r=corre,P=pvalue)}
+
   cr <- cor(dm,method = method)
   cr[upper.tri(cr, diag=TRUE)] <- NA
-  dados=melt(cr, na.rm=TRUE, value.name="cor")
-  pvalor=rcorr(as.matrix(dm),type = method)
+  dnovo=expand.grid(rownames(cr),colnames(cr))
+  dnovo$cor=c(cr)
+  dados=dnovo[!is.na(dnovo$cor),]
+  pvalor=pearson(dm,method=method)
   pvalor=pvalor$P
   pvalor[upper.tri(pvalor, diag=TRUE)] <- NA
-  pvalor=melt(pvalor, na.rm=TRUE, value.name="p")
+  dnovo1=expand.grid(rownames(pvalor),colnames(pvalor))
+  dnovo1$p=c(pvalor)
+  pvalor=dnovo1[!is.na(dnovo1$p),]
   p=ifelse(unlist(pvalor$p)<0.01,"**", ifelse(unlist(pvalor$p)<0.05,"*"," "))
   dados$p=p
   dados1=data.frame(dados[,1:3],p=pvalor$p)

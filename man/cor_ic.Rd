@@ -30,7 +30,7 @@ cor_ic(
 The function returns a new graphical approach to correlation.
 }
 \description{
-Graph: Plot Pearson correlation with interval of confidence
+Plot Pearson correlation with interval of confidence
 }
 \examples{
 data("pomegranate")

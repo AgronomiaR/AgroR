@@ -1,4 +1,6 @@
 #' Graph: Plot Pearson correlation with interval of confidence
+#'
+#' @description Plot Pearson correlation with interval of confidence
 #' @param data data.frame with responses
 #' @param background background fill (\emph{default} is TRUE)
 #' @param axis.size Axes font size (\emph{default} is 12)

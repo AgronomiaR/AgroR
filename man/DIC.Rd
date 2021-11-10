@@ -9,24 +9,26 @@ DIC(
   response,
   norm = "sw",
   homog = "bt",
-  mcomp = "tukey",
-  quali = TRUE,
   alpha.f = 0.05,
   alpha.t = 0.05,
+  quali = TRUE,
+  mcomp = "tukey",
   grau = 1,
   transf = 1,
+  constant = 0,
   test = "parametric",
   p.adj = "holm",
   geom = "bar",
   theme = theme_classic(),
+  ylab = "Response",
   sup = NA,
   CV = TRUE,
-  ylab = "Response",
   xlab = "",
   fill = "lightblue",
   angle = 0,
   family = "sans",
   textsize = 12,
+  labelsize = 5,
   dec = 3,
   addmean = TRUE,
   errorbar = TRUE,
@@ -44,17 +46,19 @@ DIC(
 
 \item{homog}{Homogeneity test of variances (\emph{default} is Bartlett)}
 
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
-
-\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{default} is qualitative)}
-
 \item{alpha.f}{Level of significance of the F test (\emph{default} is 0.05)}
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
 
+\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{default} is qualitative)}
+
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
+
 \item{grau}{Degree of polynomial in case of quantitative factor (\emph{default} is 1)}
 
 \item{transf}{Applies data transformation (\emph{default} is 1; for log consider 0)}
+
+\item{constant}{Add a constant for transformation (enter value)}
 
 \item{test}{"parametric" - Parametric test or "noparametric" - non-parametric test}
 
@@ -64,11 +68,11 @@ DIC(
 
 \item{theme}{ggplot2 theme (\emph{default} is theme_classic())}
 
+\item{ylab}{Variable response name (Accepts the \emph{expression}() function)}
+
 \item{sup}{Number of units above the standard deviation or average bar on the graph}
 
 \item{CV}{Plotting the coefficient of variation and p-value of Anova (\emph{default} is TRUE)}
-
-\item{ylab}{Variable response name (Accepts the \emph{expression}() function)}
 
 \item{xlab}{Treatments name (Accepts the \emph{expression}() function)}
 
@@ -80,6 +84,8 @@ DIC(
 
 \item{textsize}{Font size}
 
+\item{labelsize}{Label size}
+
 \item{dec}{Number of cells}
 
 \item{addmean}{Plot the average value on the graph (\emph{default} is TRUE)}
@@ -88,7 +94,7 @@ DIC(
 
 \item{posi}{Legend position}
 
-\item{point}{Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). Only for quali=F.}
+\item{point}{Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). For quali=FALSE or quali=TRUE.}
 
 \item{angle.label}{label angle}
 }
@@ -154,7 +160,7 @@ Scott R.J., Knott M. 1974. A cluster analysis method for grouping mans in the an
 
 Mendiburu, F., and de Mendiburu, M. F. (2019). Package ‘agricolae’. R Package, Version, 1-2.
 
-HOTHORN, Torsten et al. Package ‘lmtest’. Testing linear regression models. https://cran. r-project. org/web/packages/lmtest/lmtest. pdf. Accessed, v. 6, 2015.
+Hothorn, T. et al. Package ‘lmtest’. Testing linear regression models. https://cran. r-project. org/web/packages/lmtest/lmtest. pdf. Accessed, v. 6, 2015.
 }
 \seealso{
 \link{DBC} \link{DQL}

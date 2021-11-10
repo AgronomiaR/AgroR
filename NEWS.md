@@ -10,6 +10,8 @@
 
 * Added `add.letters` argument in DICT, DBCT and DQLT function.
 
+* The FAT2DIC.art and FAT2DBC.art functions have been discontinued 
+
 # AgroR 1.2.3
 
 * Added the `soybean` dataset 

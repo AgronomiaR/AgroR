@@ -8,6 +8,7 @@
 #' @param block Numeric or complex vector with blocks
 #' @param response Numeric vector with responses
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param norm Error normality test (\emph{default} is Shapiro-Wilk)
 #' @param homog Homogeneity test of variances (\emph{default} is Bartlett)
 #' @param mcomp Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)
@@ -72,12 +73,13 @@ PSUBDIC=function(f1,
                  response,
                  norm="sw",
                  homog="bt",
-                 mcomp = "tukey",
                  alpha.f=0.05,
                  alpha.t=0.05,
                  quali=c(TRUE,TRUE),
-                 transf=1,
+                 mcomp = "tukey",
                  grau=NA,
+                 transf=1,
+                 constant=0,
                  geom="bar",
                  theme=theme_classic(),
                  ylab="Response",

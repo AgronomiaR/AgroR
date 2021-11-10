@@ -12,12 +12,13 @@ FAT2DBC.ad(
   responseAd,
   norm = "sw",
   homog = "bt",
-  mcomp = "tukey",
   alpha.f = 0.05,
   alpha.t = 0.05,
   quali = c(TRUE, TRUE),
+  mcomp = "tukey",
   grau = NA,
   transf = 1,
+  constant = 0,
   geom = "bar",
   theme = theme_classic(),
   ylab = "Response",
@@ -55,17 +56,19 @@ FAT2DBC.ad(
 
 \item{homog}{Homogeneity test of variances (\emph{default} is Bartlett)}
 
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD and Duncan)}
-
 \item{alpha.f}{Level of significance of the F test (\emph{default} is 0.05)}
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
 
 \item{quali}{Defines whether the factor is quantitative or qualitative (\emph{qualitative})}
 
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD and Duncan)}
+
 \item{grau}{Degree of polynomial in case of quantitative factor (\emph{default} is 1)}
 
 \item{transf}{Applies data transformation (default is 1; for log consider 0)}
+
+\item{constant}{Add a constant for transformation (enter value)}
 
 \item{geom}{Graph type (columns or segments (For simple effect only))}
 
@@ -142,8 +145,6 @@ Scott R.J., Knott M. 1974. A cluster analysis method for grouping mans in the an
 Mendiburu, F., and de Mendiburu, M. F. (2019). Package ‘agricolae’. R Package, Version, 1-2.
 }
 \seealso{
-\link{FAT2DBC.art}
-
 \link{FAT2DBC}
 
 \link{dunnett}

@@ -18,6 +18,7 @@
 #' @param norm Error normality test (\emph{default} is Shapiro-Wilk)
 #' @param homog Homogeneity test of variances (\emph{default} is Bartlett)
 #' @param transf Applies data transformation (\emph{default} is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param sup Number of units above the standard deviation or average bar on the graph
 #' @param geom Graph type (columns or segments)
 #' @param fill Defines chart color (to generate different colors for different treatments, define fill = "trat")
@@ -64,18 +65,19 @@ FAT3DIC=function(f1,
                  f2,
                  f3,
                  response,
-                 quali=c(TRUE,TRUE,TRUE),
-                 names.fat=c("F1","F2","F3"),
-                 mcomp='tukey',
-                 alpha.t=0.05,
-                 alpha.f=0.05,
-                 transf=1,
                  norm="sw",
                  homog="bt",
+                 alpha.t=0.05,
+                 alpha.f=0.05,
+                 quali=c(TRUE,TRUE,TRUE),
+                 mcomp='tukey',
+                 grau=NA,
+                 transf=1,
+                 constant=0,
+                 names.fat=c("F1","F2","F3"),
                  ylab="Response",
                  xlab="",
                  sup=NA,
-                 grau=NA,
                  fill="lightblue",
                  theme=theme_classic(),
                  angulo=0,
@@ -100,12 +102,11 @@ FAT3DIC=function(f1,
   requireNamespace("ggplot2")
   requireNamespace("nortest")
 
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
-
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   fatores<-data.frame(fator1,fator2,fator3)
   Fator1<-factor(fator1,levels=unique(fator1));
   Fator2<-factor(fator2,levels=unique(fator2));
@@ -1791,8 +1792,8 @@ FAT3DIC=function(f1,
                                         anavaF3[8,3],
                                         alpha.t)
             tukey=tukey$groups;colnames(tukey)=c("resp","letters")
-            if(transf !=1){tukey$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
-                                                     fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(tukey)]}
+            if(transf !=1){tukey$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+                                                     fatores[,2][Fator1==lf1[k]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(tukey)]}
             print(tukey)}
             if(mcomp=='duncan'){duncan=duncan(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
                                             fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
@@ -1800,8 +1801,8 @@ FAT3DIC=function(f1,
                                             anavaF3[8,3],
                                             alpha.t)
             duncan=duncan$groups;colnames(duncan)=c("resp","letters")
-            if(transf !=1){duncan$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
-                                                     fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(duncan)]}
+            if(transf !=1){duncan$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+                                                     fatores[,2][Fator1==lf1[k]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(duncan)]}
             print(duncan)}
             if(mcomp=='lsd'){lsd=LSD(resp[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
                                               fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]],
@@ -1809,8 +1810,8 @@ FAT3DIC=function(f1,
                                               anavaF3[8,3],
                                               alpha.t)
             lsd=lsd$groups;colnames(lsd)=c("resp","letters")
-            if(transf !=1){lsd$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
-                                                     fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(lsd)]}
+            if(transf !=1){lsd$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+                                                     fatores[,2][Fator1==lf1[k]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(lsd)]}
             print(lsd)}
             if(mcomp=='sk'){
               fat=fatores[,2][Fator1==lf1[k] & fatores[,3]==lf3[j]]
@@ -1835,8 +1836,8 @@ FAT3DIC=function(f1,
             colnames(sk)=c("resp","letters")
             sk=sk[as.character(unique(fat1)),]
             rownames(sk)=unique(fat)
-            if(transf !=1){sk$respo=tapply(response[fatores[,1]==lf1[i] & fatores[,3]==lf3[j]],
-                                                     fatores[,2][Fator1==lf1[i]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(sk)]}
+            if(transf !=1){sk$respo=tapply(response[fatores[,1]==lf1[k] & fatores[,3]==lf3[j]],
+                                                     fatores[,2][Fator1==lf1[k]  & fatores[,3]==lf3[j]],mean, na.rm=TRUE)[rownames(sk)]}
             print(sk)}
             }
           }

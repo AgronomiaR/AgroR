@@ -1,4 +1,4 @@
-#'Dataset: bean
+#'Dataset: Bean
 #'
 #'@description
 #'An experiment to evaluate the effect of different strains of Azospirillum on common bean cultivar

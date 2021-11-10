@@ -14,6 +14,7 @@
 #' @param alpha.t Significance level of the multiple comparison test (\emph{default} is 0.05)
 #' @param grau Degree of polynomial in case of quantitative factor (\emph{default} is 1)
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param geom Graph type (columns or segments (For simple effect only))
 #' @param theme ggplot2 theme (\emph{default} is theme_classic())
 #' @param ylab Variable response name (Accepts the \emph{expression}() function)
@@ -46,7 +47,7 @@
 #' @return The table of analysis of variance, the test of normality of errors (Shapiro-Wilk, Lilliefors, Anderson-Darling, Cramer-von Mises, Pearson and Shapiro-Francia), the test of homogeneity of variances (Bartlett or Levene), the test of independence of Durbin-Watson errors, the test of multiple comparisons (Tukey, LSD, Scott-Knott or Duncan) or adjustment of regression models up to grade 3 polynomial, in the case of quantitative treatments. The column chart for qualitative treatments is also returned.
 #' @keywords DIC
 #' @keywords Factorial
-#' @seealso \link{FAT2DIC.art}, \link{FAT2DIC.ad}
+#' @seealso \link{FAT2DIC.ad}
 #' @references
 #'
 #' Principles and procedures of statistics a biometrical approach Steel & Torry & Dickey. Third Edition 1997
@@ -84,12 +85,13 @@ FAT2DIC=function(f1,
                  response,
                  norm="sw",
                  homog="bt",
-                 mcomp="tukey",
                  alpha.f=0.05,
                  alpha.t=0.05,
                  quali=c(TRUE,TRUE),
+                 mcomp="tukey",
                  grau=NA,
                  transf=1,
+                 constant=0,
                  geom="bar",
                  theme=theme_classic(),
                  ylab="Response",
@@ -121,11 +123,11 @@ FAT2DIC=function(f1,
   # ================================
   # Transformacao de dados
   # ================================
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   if(is.na(sup==TRUE)){sup=0.1*mean(response)}
   Fator1=factor(fator1, levels = unique(fator1))
   Fator2=factor(fator2, levels = unique(fator2))
@@ -241,7 +243,7 @@ FAT2DIC=function(f1,
   if(transf==1 && norm1$p.value<0.05 | transf==1 && indep$p.value<0.05 | transf==1 &&homog1$p.value<0.05){
     message("\nYour analysis is not valid, suggests using a non-parametric test and try to transform the data\n")}else{}
   if(transf != 1 && norm1$p.value<0.05 | transf!=1 && indep$p.value<0.05 | transf!=1 && homog1$p.value<0.05){
-    message("\nYour analysis is not valid, suggests using the function FATDIC.art\n")}else{}
+    message("\nYour analysis is not valid\n")}else{}
   message(if(transf !=1){blue("NOTE: resp = transformed means; respO = averages without transforming\n")})
 
 

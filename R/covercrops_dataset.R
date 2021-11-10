@@ -1,4 +1,4 @@
-#' Dataset: covercrops
+#' Dataset: Covercrops
 #'
 #' @description Consider a 3 ×3 factorial experiment in randomized blocks, with
 #' 4 replications, on the influence of three new soybean cultivars (A1, A2 and A3)

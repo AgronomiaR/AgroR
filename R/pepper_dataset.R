@@ -1,4 +1,4 @@
-#' Dataset: pepper
+#' Dataset: Pepper
 #'
 #' @description A vegetable breeder is characterizing five mini pepper
 #' accessions from the State University of Londrina germplasm bank for

@@ -10,13 +10,14 @@ DBC(
   response,
   norm = "sw",
   homog = "bt",
-  mcomp = "tukey",
-  quali = TRUE,
   alpha.f = 0.05,
   alpha.t = 0.05,
-  transf = 1,
-  test = "parametric",
+  quali = TRUE,
+  mcomp = "tukey",
   grau = 1,
+  transf = 1,
+  constant = 0,
+  test = "parametric",
   geom = "bar",
   theme = theme_classic(),
   sup = NA,
@@ -24,6 +25,7 @@ DBC(
   ylab = "response",
   xlab = "",
   textsize = 12,
+  labelsize = 5,
   fill = "lightblue",
   angle = 0,
   family = "sans",
@@ -46,19 +48,21 @@ DBC(
 
 \item{homog}{Homogeneity test of variances (\emph{default} is Bartlett)}
 
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
-
-\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{default} is qualitative)}
-
 \item{alpha.f}{Level of significance of the F test (\emph{default} is 0.05)}
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
 
-\item{transf}{Applies data transformation (default is 1; for log consider 0)}
+\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{default} is qualitative)}
 
-\item{test}{"parametric" - Parametric test or "noparametric" - non-parametric test}
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
 
 \item{grau}{Degree of polynomial in case of quantitative factor (\emph{default} is 1)}
+
+\item{transf}{Applies data transformation (default is 1; for log consider 0)}
+
+\item{constant}{Add a constant for transformation (enter value)}
+
+\item{test}{"parametric" - Parametric test or "noparametric" - non-parametric test}
 
 \item{geom}{graph type (columns, boxes or segments)}
 
@@ -74,6 +78,8 @@ DBC(
 
 \item{textsize}{Font size}
 
+\item{labelsize}{Label size}
+
 \item{fill}{Defines chart color (to generate different colors for different treatments, define fill = "trat")}
 
 \item{angle}{x-axis scale text rotation}
@@ -88,7 +94,7 @@ DBC(
 
 \item{posi}{Legend position}
 
-\item{point}{Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se").}
+\item{point}{Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). #' @param labelsize Label size}
 
 \item{angle.label}{label angle}
 }

@@ -11,12 +11,13 @@ DQL(
   response,
   norm = "sw",
   homog = "bt",
-  mcomp = "tukey",
   alpha.f = 0.05,
   alpha.t = 0.05,
   quali = TRUE,
-  transf = 1,
+  mcomp = "tukey",
   grau = 1,
+  transf = 1,
+  constant = 0,
   geom = "bar",
   theme = theme_classic(),
   sup = NA,
@@ -24,6 +25,7 @@ DQL(
   ylab = "Response",
   xlab = "",
   textsize = 12,
+  labelsize = 5,
   fill = "lightblue",
   angle = 0,
   family = "sans",
@@ -48,17 +50,19 @@ DQL(
 
 \item{homog}{Homogeneity test of variances (\emph{default} is Bartlett)}
 
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
-
 \item{alpha.f}{Level of significance of the F test (\emph{default} is 0.05)}
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
 
 \item{quali}{Defines whether the factor is quantitative or qualitative (\emph{default} is qualitative)}
 
-\item{transf}{Applies data transformation (default is 1; for log consider 0)}
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
 
 \item{grau}{Degree of polynomial in case of quantitative factor (\emph{default} is 1)}
+
+\item{transf}{Applies data transformation (default is 1; for log consider 0)}
+
+\item{constant}{Add a constant for transformation (enter value)}
 
 \item{geom}{Graph type (columns, boxes or segments)}
 
@@ -73,6 +77,8 @@ DQL(
 \item{xlab}{Treatments name (Accepts the \emph{expression}() function)}
 
 \item{textsize}{Font size}
+
+\item{labelsize}{Label size}
 
 \item{fill}{Defines chart color (to generate different colors for different treatments, define fill = "trat")}
 

@@ -15,6 +15,7 @@
 #' @param ylab Variable response name (Accepts the \emph{expression}() function)
 #' @param xlab Treatments name (Accepts the \emph{expression}() function)
 #' @param textsize Font size
+#' @param labelsize Label size
 #' @param fill Defines chart color (to generate different colors for different treatments, define fill = "trat")
 #' @param angle x-axis scale text rotation
 #' @param family Font family
@@ -43,7 +44,7 @@
 #' # Use the DIC.glm function
 #' #=============================
 #'
-#' resp=resp/4 # ttotal germinated seeds
+#' resp=resp/4 # total germinated seeds
 #'
 #' # the value 25 is the total of seeds in the repetition
 #' DIC.glm(trat, cbind(resp,25-resp), glm.family="binomial")
@@ -63,6 +64,7 @@ DIC.glm=function(trat,
                  angle=0,
                  family="sans",
                  textsize=12,
+                 labelsize=5,
                  dec=3,
                  addmean=TRUE,
                  errorbar=TRUE,
@@ -71,7 +73,7 @@ DIC.glm=function(trat,
                  angle.label=0){
   if(angle.label==0){hjust=0.5}else{hjust=0}
   requireNamespace("emmeans")
-  requireNamespace("stringr")
+  # requireNamespace("stringr")
   requireNamespace("multcomp")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
@@ -115,7 +117,8 @@ DIC.glm=function(trat,
       prob=letra$prob*100
       superior=letra$asymp.UCL*100
       inferior=letra$asymp.LCL*100
-      grupo=str_trim(letra$.group)
+      # grupo=str_trim(letra$.group)
+      grupo=gsub(" ","",letra$.group)
       trat=letra$trat
       dadosm=data.frame(trat,prob,superior,inferior,grupo)
       if(addmean==TRUE){dadosm$letra=paste(format(round(prob,3),digits = dec),
@@ -129,10 +132,10 @@ DIC.glm=function(trat,
             geom_col(aes(fill=trat),fill=fill,color=1)}
         if(errorbar==TRUE){grafico=grafico+
           geom_text(aes(y=superior+sup,label=letra),
-                    family=family,
+                    family=family,size=labelsize,
                     angle=angle.label,
                     hjust=hjust)}
-        if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=prob+sup,label=letra),family=family,
+        if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=prob+sup,label=letra),family=family,size=labelsize,
                                                       angle=angle.label, hjust=hjust)}
         if(errorbar==TRUE){grafico=grafico+
           geom_errorbar(data=dadosm,aes(ymin=inferior, ymax=superior,color=1),
@@ -140,10 +143,10 @@ DIC.glm=function(trat,
       if(geom=="point"){grafico=ggplot(dadosm,aes(x=trat,
                                                   y=prob))
       if(errorbar==TRUE){grafico=grafico+
-        geom_text(aes(y=superior+sup, label=letra),
+        geom_text(aes(y=superior+sup, label=letra),size=labelsize,
                   family=family,angle=angle.label, hjust=hjust)}
       if(errorbar==FALSE){grafico=grafico+
-        geom_text(aes(y=prob+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+        geom_text(aes(y=prob+sup,label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
       if(errorbar==TRUE){grafico=grafico+
         geom_errorbar(data=dadosm,
                       aes(ymin=inferior,
@@ -206,8 +209,8 @@ DIC.glm=function(trat,
       rate=letra$rate
       superior=letra$asymp.UCL
       inferior=letra$asymp.LCL
-      grupo=str_trim(letra$.group)
-
+      # grupo=str_trim(letra$.group)
+      grupo=gsub(" ","",letra$.group)
       desvio=letra$asymp.UCL-letra$rate
       trat=letra$trat
       media=rate
@@ -226,10 +229,10 @@ DIC.glm=function(trat,
             geom_col(aes(fill=trat),fill=fill,color=1)}
         if(errorbar==TRUE){grafico=grafico+
           geom_text(aes(y=superior+sup,label=letra),
-                    family=family,
+                    family=family,size=labelsize,
                     angle=angle.label,
                     hjust=hjust)}
-        if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=rate+sup,label=letra),family=family,
+        if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=rate+sup,label=letra),family=family,size=labelsize,
                                                       angle=angle.label, hjust=hjust)}
         if(errorbar==TRUE){grafico=grafico+
           geom_errorbar(data=dadosm,aes(ymin=inferior, ymax=superior,color=1),
@@ -237,10 +240,10 @@ DIC.glm=function(trat,
       if(geom=="point"){grafico=ggplot(dadosm,aes(x=trat,
                                                   y=rate))
       if(errorbar==TRUE){grafico=grafico+
-        geom_text(aes(y=superior+sup, label=letra),
+        geom_text(aes(y=superior+sup, label=letra),size=labelsize,
                   family=family,angle=angle.label, hjust=hjust)}
       if(errorbar==FALSE){grafico=grafico+
-        geom_text(aes(y=rate+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+        geom_text(aes(y=rate+sup,label=letra),size=labelsize,family=family,angle=angle.label, hjust=hjust)}
       if(errorbar==TRUE){grafico=grafico+
         geom_errorbar(data=dadosm,
                       aes(ymin=inferior,

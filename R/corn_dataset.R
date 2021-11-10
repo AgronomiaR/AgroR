@@ -1,4 +1,4 @@
-#' Dataset: corn
+#' Dataset: Corn
 #'
 #' @description A 3 x 2 factorial experiment was carried out to compare three
 #' new corn hybrids considering the change in sowing density, being

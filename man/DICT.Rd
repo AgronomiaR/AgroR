@@ -27,6 +27,7 @@ DICT(
   legend = "Legend",
   ylim = NA,
   width.bar = 0.2,
+  size.bar = 0.8,
   posi = c(0.1, 0.8),
   xnumeric = FALSE,
   all.letters = FALSE
@@ -75,7 +76,9 @@ DICT(
 
 \item{ylim}{y-axis scale}
 
-\item{width.bar}{width errorbar}
+\item{width.bar}{width error bar}
+
+\item{size.bar}{size error bar}
 
 \item{posi}{Legend position}
 

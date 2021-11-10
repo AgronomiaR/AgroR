@@ -3,7 +3,7 @@
 \docType{data}
 \name{orchard}
 \alias{orchard}
-\title{Dataset: orchard}
+\title{Dataset: Orchard}
 \format{
 data.frame containing data set
   \describe{

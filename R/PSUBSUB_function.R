@@ -169,12 +169,6 @@ PSUBSUBDBC=function(f1,
                            QME = qmres[i],
                            alpha = alpha.t)
           letra1=data.frame(resp=medias,groups=letra)
-          #
-          # letra1=sk(response,
-          #              fatores[,i],
-          #              GL[i],
-          #              qmres[i]/GL[i],alpha.t)
-          # colnames(letra1)=c("resp","groups")
           print(letra1)}
         }
       if(pvalor[i]>alpha.f) {
@@ -917,7 +911,7 @@ PSUBSUBDBC=function(f1,
 
 
     cat(green(bold("\n------------------------------------------\n")))
-    cat("Analyzing ", fac.names[2], ' inside of each level of ', fac.names[1], 'and',fac.names[3])
+    cat("Analyzing ", fac.names[1], ' inside of each level of ', fac.names[3], 'and',fac.names[2])
     cat(green(bold("\n------------------------------------------\n")))
     # testando f2
     # substituir qmres
@@ -948,7 +942,7 @@ PSUBSUBDBC=function(f1,
     f11=dtf2a[3,]
     desd=rbind(f11,
                dtf2,
-               c(nf2f3,qmresf1f3/nf1f3,qmresf1f3,NA,NA))
+               c(nf2f3,qmresf1f3*nf1f3,qmresf1f3,NA,NA))
     nline1=nrow(desd)
     rownames(desd)[nline1]="Residuals combined"
     colnames(desd)=c("Df","Sum sq","Mean Sq", "F value","Pr(>F)")
@@ -1009,7 +1003,7 @@ PSUBSUBDBC=function(f1,
     cat('\n\n')
 
     cat(green(bold("\n------------------------------------------\n")))
-    cat("Analyzing ", fac.names[1], ' inside of each level of ', fac.names[2], 'and',fac.names[3])
+    cat("Analyzing ", fac.names[2], ' inside of each level of ', fac.names[1], 'and',fac.names[3])
     cat(green(bold("\n------------------------------------------\n")))
 
     # desdobrando f1
@@ -1017,7 +1011,7 @@ PSUBSUBDBC=function(f1,
     nf2f3=((qmres[2]+(nv3-1)*qmres[3])^2)/
       ((qmres[2]^2)/GL[2]+(((nv3-1)*qmres[3])^2)/GL[3])
     nf2f3=round(nf2f3)
-    mod=aov(response~Fator3/Fator1/Fator2)
+    mod=aov(response~Fator2/Fator1/Fator3)
     summary(mod)
     l2<-vector('list',(nv1*nv3))
     nomes=expand.grid(names(summary(Fator1)),
@@ -1029,7 +1023,7 @@ PSUBSUBDBC=function(f1,
       l2[[j]]<-v
       v<-numeric(0)
     }
-    dtf1a=data.frame(summary(mod,split=list('Fator3:Fator1:Fator2'=l2))[[1]])
+    dtf1a=data.frame(summary(mod,split=list('Fator2:Fator1:Fator3'=l2))[[1]])
     nl=nrow(dtf1a)
     dtf1=dtf1a[-c(1,2,3,nl),]
     nline=nrow(dtf1)
@@ -1040,7 +1034,7 @@ PSUBSUBDBC=function(f1,
     f11=dtf1a[3,]
     desd=rbind(f11,
                dtf1,
-               c(nf2f3,qmresf2f3/nf2f3,qmresf2f3,NA,NA))
+               c(nf2f3,qmresf2f3*nf2f3,qmresf2f3,NA,NA))
     nline1=nrow(desd)
     rownames(desd)[nline1]="Residuals combined"
     colnames(desd)=c("Df","Sum sq","Mean Sq", "F value","Pr(>F)")

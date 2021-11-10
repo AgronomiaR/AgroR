@@ -16,6 +16,7 @@
 #' @param ylab Variable response name (Accepts the \emph{expression}() function)
 #' @param xlab Treatments name (Accepts the \emph{expression}() function)
 #' @param textsize Font size
+#' @param labelsize Label size
 #' @param fill Defines chart color (to generate different colors for different treatments, define fill = "trat")
 #' @param angle x-axis scale text rotation
 #' @param family Font family
@@ -50,6 +51,7 @@ DBC.glm=function(trat,
                  angle=0,
                  family="sans",
                  textsize=12,
+                 labelsize=5,
                  dec=3,
                  addmean=TRUE,
                  errorbar=TRUE,
@@ -58,7 +60,7 @@ DBC.glm=function(trat,
                  angle.label=0){
   if(angle.label==0){hjust=0.5}else{hjust=0}
   requireNamespace("emmeans")
-  requireNamespace("stringr")
+  # requireNamespace("stringr")
   requireNamespace("multcomp")
   requireNamespace("crayon")
   requireNamespace("ggplot2")
@@ -110,7 +112,8 @@ DBC.glm=function(trat,
       prob=letra$prob*100
       superior=letra$asymp.UCL*100
       inferior=letra$asymp.LCL*100
-      grupo=str_trim(letra$.group)
+      # grupo=str_trim(letra$.group)
+      grupo=gsub(" ","",letra$.group)
       trat=letra$trat
 
       desvio=letra$asymp.UCL-letra$prob
@@ -129,11 +132,11 @@ DBC.glm=function(trat,
             geom_col(aes(fill=trat),fill=fill,color=1)}
         if(errorbar==TRUE){grafico=grafico+
           geom_text(aes(y=superior+sup,label=letra),
-                    family=family,
+                    family=family,size=labelsize,
                     angle=angle.label,
                     hjust=hjust)}
         if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=prob+sup,label=letra),family=family,
-                                                      angle=angle.label, hjust=hjust)}
+                                                      angle=angle.label, size=labelsize,hjust=hjust)}
         if(errorbar==TRUE){grafico=grafico+
           geom_errorbar(data=dadosm,aes(ymin=inferior, ymax=superior,color=1),
                         color="black",width=0.3)}}
@@ -141,9 +144,9 @@ DBC.glm=function(trat,
                                                   y=prob))
       if(errorbar==TRUE){grafico=grafico+
         geom_text(aes(y=superior+sup, label=letra),
-                  family=family,angle=angle.label, hjust=hjust)}
+                  family=family,angle=angle.label,size=labelsize, hjust=hjust)}
       if(errorbar==FALSE){grafico=grafico+
-        geom_text(aes(y=prob+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+        geom_text(aes(y=prob+sup,label=letra),size=labelsize,family=family,angle=angle.label, hjust=hjust)}
       if(errorbar==TRUE){grafico=grafico+
         geom_errorbar(data=dadosm,
                       aes(ymin=inferior,
@@ -210,7 +213,8 @@ DBC.glm=function(trat,
       rate=letra$rate
       superior=letra$asymp.UCL
       inferior=letra$asymp.LCL
-      grupo=str_trim(letra$.group)
+      # grupo=str_trim(letra$.group)
+      grupo=gsub(" ","",letra$.group)
       trat=letra$trat
       desvio=letra$asymp.UCL-letra$rate
       media=rate
@@ -229,11 +233,11 @@ DBC.glm=function(trat,
             geom_col(aes(fill=trat),fill=fill,color=1)}
         if(errorbar==TRUE){grafico=grafico+
           geom_text(aes(y=superior+sup,label=letra),
-                    family=family,
+                    family=family,size=labelsize,
                     angle=angle.label,
                     hjust=hjust)}
         if(errorbar==FALSE){grafico=grafico+geom_text(aes(y=rate+sup,label=letra),family=family,
-                                                      angle=angle.label, hjust=hjust)}
+                                                      angle=angle.label,size=labelsize, hjust=hjust)}
         if(errorbar==TRUE){grafico=grafico+
           geom_errorbar(data=dadosm,aes(ymin=inferior, ymax=superior,color=1),
                         color="black",width=0.3)}}
@@ -241,9 +245,9 @@ DBC.glm=function(trat,
                                                   y=rate))
       if(errorbar==TRUE){grafico=grafico+
         geom_text(aes(y=superior+sup, label=letra),
-                  family=family,angle=angle.label, hjust=hjust)}
+                  family=family,size=labelsize,angle=angle.label, hjust=hjust)}
       if(errorbar==FALSE){grafico=grafico+
-        geom_text(aes(y=rate+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+        geom_text(aes(y=rate+sup,label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
       if(errorbar==TRUE){grafico=grafico+
         geom_errorbar(data=dadosm,
                       aes(ymin=inferior,

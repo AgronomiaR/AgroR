@@ -10,14 +10,15 @@ FAT3DBC(
   f3,
   block,
   response,
-  quali = c(TRUE, TRUE, TRUE),
-  names.fat = c("F1", "F2", "F3"),
-  mcomp = "tukey",
-  transf = 1,
   norm = "sw",
   homog = "bt",
   alpha.f = 0.05,
   alpha.t = 0.05,
+  quali = c(TRUE, TRUE, TRUE),
+  mcomp = "tukey",
+  transf = 1,
+  constant = 0,
+  names.fat = c("F1", "F2", "F3"),
   ylab = "Response",
   xlab = "",
   sup = NA,
@@ -45,14 +46,6 @@ FAT3DBC(
 
 \item{response}{Numerical vector containing the response of the experiment.}
 
-\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{qualitative})}
-
-\item{names.fat}{Allows labeling the factors 1, 2 and 3.}
-
-\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
-
-\item{transf}{Applies data transformation (\emph{default} is 1; for log consider 0)}
-
 \item{norm}{Error normality test (\emph{default} is Shapiro-Wilk)}
 
 \item{homog}{Homogeneity test of variances (\emph{default} is Bartlett)}
@@ -60,6 +53,16 @@ FAT3DBC(
 \item{alpha.f}{Level of significance of the F test (\emph{default} is 0.05)}
 
 \item{alpha.t}{Significance level of the multiple comparison test (\emph{default} is 0.05)}
+
+\item{quali}{Defines whether the factor is quantitative or qualitative (\emph{qualitative})}
+
+\item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
+
+\item{transf}{Applies data transformation (\emph{default} is 1; for log consider 0)}
+
+\item{constant}{Add a constant for transformation (enter value)}
+
+\item{names.fat}{Allows labeling the factors 1, 2 and 3.}
 
 \item{ylab}{Variable response name (Accepts the \emph{expression}() function)}
 

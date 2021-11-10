@@ -26,7 +26,8 @@ DQLT(
   fill = "gray",
   legend = "Legend",
   ylim = NA,
-  width.bar = 0.1,
+  width.bar = 0.2,
+  size.bar = 0.8,
   dec = 3,
   theme = theme_classic(),
   xnumeric = FALSE,
@@ -50,7 +51,7 @@ DQLT(
 
 \item{mcomp}{Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)}
 
-\item{error}{Add error bar}
+\item{error}{Add error bar (SD)}
 
 \item{xlab}{Treatments name (Accepts the \emph{expression}() function)}
 
@@ -76,7 +77,9 @@ DQLT(
 
 \item{ylim}{y-axis scale}
 
-\item{width.bar}{width errorbar}
+\item{width.bar}{width error bar}
+
+\item{size.bar}{size error bar}
 
 \item{dec}{Number of cells}
 

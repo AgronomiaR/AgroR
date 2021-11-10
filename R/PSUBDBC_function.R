@@ -6,6 +6,7 @@
 #' @param block Numeric or complex vector with blocks
 #' @param response Numeric vector with responses
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param norm Error normality test (\emph{default} is Shapiro-Wilk)
 #' @param homog Homogeneity test of variances (\emph{default} is Bartlett)
 #' @param mcomp Multiple comparison test (Tukey (\emph{default}), LSD, Scott-Knott and Duncan)
@@ -78,10 +79,11 @@ PSUBDBC=function(f1,
                  homog="bt",
                  alpha.f=0.05,
                  alpha.t=0.05,
-                 mcomp = "tukey",
                  quali=c(TRUE,TRUE),
+                 mcomp = "tukey",
                  grau=NA,
                  transf=1,
+                 constant=0,
                  geom="bar",
                  theme=theme_classic(),
                  ylab="Response",
@@ -122,11 +124,11 @@ PSUBDBC=function(f1,
   # ================================
   # Transformacao de dados
   # ================================
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   graph=data.frame(Fator1,Fator2,resp)
   # -----------------------------
   # Analise de variancia

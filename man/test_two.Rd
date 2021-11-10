@@ -14,7 +14,9 @@ test_two(
   theme = theme_classic(),
   ylab = "Response",
   xlab = "",
-  var.equal = FALSE
+  var.equal = FALSE,
+  pointsize = 2,
+  fill = "white"
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ test_two(
 \item{xlab}{Treatments name (Accepts the \emph{expression}() function)}
 
 \item{var.equal}{A logical variable indicating whether to treat the two variances as being equal. If TRUE then the pooled variance is used to estimate the variance otherwise the Welch (or Satterthwaite) approximation to the degrees of freedom is used.}
+
+\item{pointsize}{Point size}
+
+\item{fill}{fill box}
 }
 \value{
 Returns the test for two samples (paired or unpaired t test, paired or unpaired Wilcoxon test)

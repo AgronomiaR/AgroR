@@ -21,6 +21,7 @@ DBC.glm(
   angle = 0,
   family = "sans",
   textsize = 12,
+  labelsize = 5,
   dec = 3,
   addmean = TRUE,
   errorbar = TRUE,
@@ -61,6 +62,8 @@ DBC.glm(
 \item{family}{Font family}
 
 \item{textsize}{Font size}
+
+\item{labelsize}{Label size}
 
 \item{dec}{Number of cells}
 

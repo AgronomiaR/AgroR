@@ -20,6 +20,7 @@ DIC.glm(
   angle = 0,
   family = "sans",
   textsize = 12,
+  labelsize = 5,
   dec = 3,
   addmean = TRUE,
   errorbar = TRUE,
@@ -59,6 +60,8 @@ DIC.glm(
 
 \item{textsize}{Font size}
 
+\item{labelsize}{Label size}
+
 \item{dec}{Number of cells}
 
 \item{addmean}{Plot the average value on the graph (\emph{default} is TRUE)}
@@ -91,7 +94,7 @@ DIC(trat, resp, test="noparametric")
 # Use the DIC.glm function
 #=============================
 
-resp=resp/4 # ttotal germinated seeds
+resp=resp/4 # total germinated seeds
 
 # the value 25 is the total of seeds in the repetition
 DIC.glm(trat, cbind(resp,25-resp), glm.family="binomial")

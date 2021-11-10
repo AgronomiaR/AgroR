@@ -1,4 +1,4 @@
-#' Dataset: orchard
+#' Dataset: Orchard
 #'
 #' @description An experiment was carried out to analyze the treatments
 #' in orchards applied in the rows and between the rows, in a split-plot

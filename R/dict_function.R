@@ -25,7 +25,8 @@
 #' @param legend Legend title
 #' @param posi Legend position
 #' @param ylim y-axis scale
-#' @param width.bar width errorbar
+#' @param width.bar width error bar
+#' @param size.bar size error bar
 #' @param xnumeric Declare x as numeric (\emph{default} is FALSE)
 #' @param p.adj Method for adjusting p values for Kruskal-Wallis ("none","holm","hommel", "hochberg", "bonferroni", "BH", "BY", "fdr")
 #' @param all.letters Adds all label letters regardless of whether it is significant or not.
@@ -76,6 +77,7 @@ DICT=function(trat,
               legend="Legend",
               ylim=NA,
               width.bar=0.2,
+              size.bar=0.8,
               posi=c(0.1,0.8),
               xnumeric=FALSE,
               all.letters=FALSE){
@@ -456,7 +458,7 @@ grafico=ggplot(dadosm,aes(y=media,
 if(error==TRUE){grafico=grafico+
   geom_errorbar(aes(ymin=media-desvio,
                     ymax=media+desvio),
-                width=width.bar)}
+                width=width.bar,size=size.bar)}
 if(addmean==FALSE && error==FALSE){grafico=grafico+
   geom_text_repel(aes(y=media+sup,label=letra),family=family,size=labelsize)}
 if(addmean==TRUE && error==FALSE){grafico=grafico+
@@ -486,7 +488,7 @@ grafico=ggplot(dadosm,aes(y=media,
 if(error==TRUE){grafico=grafico+
   geom_errorbar(aes(ymin=media-desvio,
                     ymax=media+desvio),
-                width=width.bar,
+                width=width.bar,size=size.bar,
                 position = position_dodge(width=0.9))}
 if(addmean==FALSE && error==FALSE){grafico=grafico+
   geom_text(aes(y=media+sup,label=letra),

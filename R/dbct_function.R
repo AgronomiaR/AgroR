@@ -15,7 +15,7 @@
 #' @param xlab Treatments name (Accepts the \emph{expression}() function)
 #' @param fill Defines chart color (to generate different colors for different treatments, define fill = "trat")
 #' @param theme ggplot2 theme (\emph{default} is theme_classic())
-#' @param error Add error bar
+#' @param error Add error bar (SD)
 #' @param sup Number of units above the standard deviation or average bar on the graph
 #' @param addmean Plot the average value on the graph (\emph{default} is TRUE)
 #' @param textsize Font size of the texts and titles of the axes
@@ -26,7 +26,8 @@
 #' @param legend Legend title
 #' @param posi Legend position
 #' @param ylim y-axis scale
-#' @param width.bar width errorbar
+#' @param width.bar width error bar
+#' @param size.bar size error bar
 #' @param xnumeric Declare x as numeric (\emph{default} is FALSE)
 #' @param all.letters Adds all label letters regardless of whether it is significant or not.
 #' @note The ordering of the graph is according to the sequence in which the factor levels are arranged in the data sheet. The bars of the column and segment graphs are standard deviation.
@@ -69,12 +70,12 @@ DBCT=function(trat,
               response,
               alpha.f=0.05,
               alpha.t=0.05,
-              theme=theme_classic(),
+              mcomp="tukey",
               geom="bar",
+              theme=theme_classic(),
               fill="gray",
               ylab="Response",
               xlab="Independent",
-              mcomp="tukey",
               textsize=12,
               labelsize=5,
               error=TRUE,
@@ -84,7 +85,8 @@ DBCT=function(trat,
               posi=c(0.1,0.8),
               legend="Legend",
               ylim=NA,
-              width.bar=0.1,
+              width.bar=0.2,
+              size.bar=0.8,
               dec=3,
               xnumeric=FALSE,
               all.letters=FALSE){
@@ -428,7 +430,7 @@ DBCT=function(trat,
             legend.text = element_text(size = textsize))+labs(shape=legend, lty=legend)
     if(error==TRUE){grafico=grafico+
       geom_errorbar(aes(ymin=media-desvio,
-                        ymax=media+desvio), width=width.bar)}
+                        ymax=media+desvio), size=size.bar, width=width.bar)}
     if(addmean==FALSE && error==FALSE){grafico=grafico+
       geom_text_repel(aes(y=media+sup,label=letra),family=family,size=labelsize)}
     if(addmean==TRUE && error==FALSE){grafico=grafico+
@@ -460,7 +462,7 @@ DBCT=function(trat,
     if(error==TRUE){grafico=grafico+
       geom_errorbar(aes(ymin=media-desvio,
                         ymax=media+desvio),
-                    width=width.bar, position = position_dodge(width=0.9))}
+                    width=width.bar, size=size.bar, position = position_dodge(width=0.9))}
     if(addmean==FALSE && error==FALSE){grafico=grafico+
       geom_text(aes(y=media+sup,label=letra),
                 size=labelsize,family=family,

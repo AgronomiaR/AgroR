@@ -15,6 +15,7 @@
 #' @param alpha.t Significance level of the multiple comparison test (\emph{default} is 0.05)
 #' @param grau Degree of polynomial in case of quantitative factor (\emph{default} is 1)
 #' @param transf Applies data transformation (default is 1; for log consider 0)
+#' @param constant Add a constant for transformation (enter value)
 #' @param test "parametric" - Parametric test or "noparametric" - non-parametric test
 #' @param geom graph type (columns, boxes or segments)
 #' @param theme ggplot2 theme (\emph{default} is theme_classic())
@@ -26,15 +27,16 @@
 #' @param angle x-axis scale text rotation
 #' @param family Font family
 #' @param textsize Font size
+#' @param labelsize Label size
 #' @param dec Number of cells
 #' @param addmean Plot the average value on the graph (\emph{default} is TRUE)
 #' @param errorbar Plot the standard deviation bar on the graph (In the case of a segment and column graph) - \emph{default} is TRUE
 #' @param posi Legend position
+#' @param point Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se"). #' @param labelsize Label size
+#' @param angle.label label angle
 #' @note The ordering of the graph is according to the sequence in which the factor levels are arranged in the data sheet. The bars of the column and segment graphs are standard deviation.
 #' @note CV and p-value of the graph indicate coefficient of variation and p-value of the F test of the analysis of variance.
 #' @note In the final output when transformation (transf argument) is different from 1, the columns resp and respo in the mean test are returned, indicating transformed and non-transformed mean, respectively.
-#' @param point Defines whether to plot mean ("mean"), mean with standard deviation ("mean_sd" - \emph{default}) or mean with standard error (\emph{default} - "mean_se").
-#' @param angle.label label angle
 #' @keywords DBC
 #' @keywords Experimental
 #' @references
@@ -81,13 +83,14 @@ DBC=function(trat,
              response,
              norm="sw",
              homog="bt",
-             mcomp="tukey",
-             quali=TRUE,
              alpha.f=0.05,
              alpha.t=0.05,
-             transf=1,
-             test="parametric",
+             quali=TRUE,
+             mcomp="tukey",
              grau=1,
+             transf=1,
+             constant=0,
+             test="parametric",
              geom="bar",
              theme=theme_classic(),
              sup=NA,
@@ -95,6 +98,7 @@ DBC=function(trat,
              ylab="response",
              xlab="",
              textsize=12,
+             labelsize=5,
              fill="lightblue",
              angle=0,
              family="sans",
@@ -110,11 +114,11 @@ DBC=function(trat,
   if(is.na(sup==TRUE)){sup=0.2*mean(response, na.rm=TRUE)}
   if(angle.label==0){hjust=0.5}else{hjust=0}
   if(test=="parametric"){
-  if(transf==1){resp=response}else{resp=(response^transf-1)/transf}
-  if(transf==0){resp=log(response)}
-  if(transf==0.5){resp=sqrt(response)}
-  if(transf==-0.5){resp=1/sqrt(response)}
-  if(transf==-1){resp=1/response}
+  if(transf==1){resp=response+constant}else{resp=((response+constant)^transf-1)/transf}
+  if(transf==0){resp=log(response+constant)}
+  if(transf==0.5){resp=sqrt(response+constant)}
+  if(transf==-0.5){resp=1/sqrt(response+constant)}
+  if(transf==-1){resp=1/(response+constant)}
   trat1=trat
   trat=as.factor(trat)
   bloco=as.factor(block)
@@ -272,10 +276,10 @@ DBC=function(trat,
                                 fill=fill,color=1)}
   if(errorbar==TRUE){grafico=grafico+
     geom_text(aes(y=media+sup+if(sup<0){-desvio}else{desvio},label=letra),
-              family=family,angle=angle.label, hjust=hjust)}
+              family=family,angle=angle.label, size=labelsize,hjust=hjust)}
   if(errorbar==FALSE){grafico=grafico+
     geom_text(aes(y=media+sup,label=letra),
-              family=family,angle=angle.label, hjust=hjust)}
+              family=family,angle=angle.label,size=labelsize, hjust=hjust)}
   if(errorbar==TRUE){grafico=grafico+
     geom_errorbar(data=dadosm,aes(ymin=media-desvio,
                                   ymax=media+desvio,color=1),
@@ -284,9 +288,9 @@ DBC=function(trat,
                                               y=media))
   if(errorbar==TRUE){grafico=grafico+
     geom_text(aes(y=media+sup+if(sup<0){-desvio}else{desvio},label=letra),
-              family=family,angle=angle.label, hjust=hjust)}
+              family=family,angle=angle.label, size=labelsize,hjust=hjust)}
   if(errorbar==FALSE){grafico=grafico+
-    geom_text(aes(y=media+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+    geom_text(aes(y=media+sup,label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
   if(errorbar==TRUE){grafico=grafico+
     geom_errorbar(data=dadosm,aes(ymin=media-desvio,
                                   ymax=media+desvio,color=1),
@@ -320,7 +324,7 @@ DBC=function(trat,
     geom_boxplot(aes(fill=trats),fill=fill)}
   grafico=grafico+
     geom_text(data=dadosm2,aes(y=superior,label=letra),
-              family=family,angle=angle.label, hjust=hjust)}
+              family=family,size=labelsize,angle=angle.label, hjust=hjust)}
   grafico=grafico+theme+
     ylab(ylab)+
     xlab(xlab)+
@@ -329,7 +333,7 @@ DBC=function(trat,
           axis.title = element_text(size=textsize,color="black",family=family),
           legend.position = "none")
   if(angle !=0){grafico=grafico+theme(axis.text.x=element_text(hjust = 1.01,angle = angle))}
-  if(CV==TRUE){grafico=grafico+labs(caption=paste("p-value = ", if(a$`Pr(>F)`[1]<0.0001){paste("<", 0.0001)}
+  if(CV==TRUE){grafico=grafico+labs(caption=paste("p-value", if(a$`Pr(>F)`[1]<0.0001){paste("<", 0.0001)}
                                                   else{paste("=", round(a$`Pr(>F)`[1],4))},"; CV = ",
                                                   round(abs(sqrt(a$`Mean Sq`[3])/mean(resp))*100,2),"%"))}
   }
@@ -518,9 +522,9 @@ DBC=function(trat,
       geom_col(aes(fill=trats),fill=fill,color=1)}
     if(errorbar==TRUE){grafico=grafico+
       geom_text(aes(y=media+sup+if(sup<0){-std}else{std},label=letra),
-                family=family,angle=angle.label, hjust=hjust)}
+                family=family,size=labelsize,angle=angle.label, hjust=hjust)}
     if(errorbar==FALSE){grafico=grafico+
-      geom_text(aes(y=media+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+      geom_text(aes(y=media+sup,label=letra),size=labelsize,family=family,angle=angle.label, hjust=hjust)}
     if(errorbar==TRUE){grafico=grafico+
       geom_errorbar(aes(ymin=response-std,
                         ymax=response+std),
@@ -530,9 +534,9 @@ DBC=function(trat,
                                          y=response))
     if(errorbar==TRUE){grafico=grafico+
       geom_text(aes(y=media+sup+if(sup<0){-std}else{std},label=letra),
-                family=family,angle=angle.label, hjust=hjust)}
+                family=family,size=labelsize,angle=angle.label, hjust=hjust)}
     if(errorbar==FALSE){grafico=grafico+
-      geom_text(aes(y=media+sup,label=letra),family=family,angle=angle.label, hjust=hjust)}
+      geom_text(aes(y=media+sup,label=letra),size=labelsize,family=family,angle=angle.label, hjust=hjust)}
     if(errorbar==TRUE){grafico=grafico+
       geom_errorbar(aes(ymin=response-std,
                         ymax=response+std),
@@ -565,7 +569,7 @@ DBC=function(trat,
     grafico=grafico+
       geom_text(data=dadosm2,
                 aes(y=superior,
-                    label=letra),family=family,angle=angle.label, hjust=hjust)}
+                    label=letra),family=family,size=labelsize,angle=angle.label, hjust=hjust)}
 
     grafico=grafico+theme+
       ylab(ylab)+

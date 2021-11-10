@@ -3,7 +3,7 @@
 \docType{data}
 \name{bean}
 \alias{bean}
-\title{Dataset: bean}
+\title{Dataset: Bean}
 \format{
 data.frame containing data set
   \describe{
